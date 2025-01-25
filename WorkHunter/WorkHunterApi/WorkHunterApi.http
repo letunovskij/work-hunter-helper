@@ -1,0 +1,6 @@
+@WorkHunterApi_HostAddress = http://localhost:5150
+
+GET {{WorkHunterApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
