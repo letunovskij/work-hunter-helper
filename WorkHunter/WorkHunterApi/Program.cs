@@ -1,11 +1,7 @@
 using Mapster;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OAuth;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
@@ -67,8 +63,8 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config =>
 {
-    config.UseSqlite("Filename=WorkHunterDb.sqlite");
-    //config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
+    //config.UseSqlite("Filename=WorkHunterDb.sqlite");
+    config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
     //config.EnableSensitiveDataLogging();
 });
 
@@ -120,15 +116,15 @@ app.UseAuthorization();
 
 app.MapUserEndpoints();
 
-//if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
-//{
-//    var scope = app.Services.CreateScope();
-//    await Initialize.SeedData(
-//        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
-//        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-//        scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
-//    scope.Dispose();
-//}
+if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
+{
+    var scope = app.Services.CreateScope();
+    await Initialize.SeedData(
+        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
+        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
+        scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
+    scope.Dispose();
+}
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableSwagger"))
 {
@@ -137,4 +133,3 @@ if (builder.Configuration.GetValue<bool>("Settings:EnableSwagger"))
 }
 app.UseExceptionHandler();
 app.Run();
-

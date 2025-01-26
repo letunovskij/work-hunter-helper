@@ -17,7 +17,11 @@ internal static class UserEndpoints
             .RequireAuthorization(AppPolicies.All)
             .WithDescription("Получить текущего пользователя");
 
-        routeGroup.MapGet("token", async ([FromBody] LoginDto dto, IUserService service) => await service.Login(dto))
+        routeGroup.MapGet(string.Empty, async (IUserService service) => await service.GetAll())
+            //.RequireAuthorization(AppPolicies.Admin)
+            .WithDescription("Получить список всех пользователей");
+
+        routeGroup.MapPost("token", async ([FromBody] LoginDto dto, IUserService service) => await service.Login(dto))
             .WithDescription("Получить токен доступа");
     }
 }

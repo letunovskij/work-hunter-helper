@@ -40,6 +40,15 @@ public sealed class UserService : IUserService
         this.loginValidator = loginValidator;
     }
 
+    public async Task<IReadOnlyList<UserBaseView>> GetAll()
+    {
+        var users = await dbContext.Users
+                                   .AsNoTracking()
+                                   .ToListAsync();
+
+        return users.Adapt<List<UserBaseView>>();
+    }
+
     public async Task<UserBaseView> GetCurrent()
     {
         if (string.IsNullOrEmpty(currentUserPrincipal.Identity?.Name))
@@ -58,19 +67,22 @@ public sealed class UserService : IUserService
 
         if (!await userManager.CheckPasswordAsync(user, dto.Password))
             throw new ArgumentException("Неверный логин или пароль!");
+        var user1 = await dbContext.Users.Include(x => x.UserRoles).FirstOrDefaultAsync(x => x.Email == dto.Email);
         return await GenerateTokens(user);
     }
 
     #region private
 
-    private async Task<UserBaseView> GetByUserName(string userName)
+    private async Task<UserView> GetByUserName(string userName)
     {
         var user = await GetUser(userName) ?? throw new EntityNotFoundException($"Пользователь {userName} не обнаружен!");
-        return user.Adapt<UserBaseView>();
+        return user.Adapt<UserView>();
     }
 
     private Task<User?> GetUser(string? userName)
-        => dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
+        => dbContext.Users
+                    .Include(x => x.UserRoles)
+                    .FirstOrDefaultAsync(x => x.UserName == userName);
 
     private void CheckPossibilityToLoginAtUser(User user)
     {
@@ -95,14 +107,14 @@ public sealed class UserService : IUserService
             audience: authOptions.Audience,
             claims: claims,
             expires: expiresIn,
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)), SecurityAlgorithms.Aes256KW)
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)), SecurityAlgorithms.HmacSha256Signature)
         );
         var refreshSecurityToken = new JwtSecurityToken(
             issuer: authOptions.Issuer,
             audience: authOptions.Audience,
             claims: claims,
             expires: refreshExpiresIn,
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)), SecurityAlgorithms.Aes256KW)
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)), SecurityAlgorithms.HmacSha256Signature)
             );
 
         var accessToken = tokenHandler.WriteToken(accessSecurityToken);
