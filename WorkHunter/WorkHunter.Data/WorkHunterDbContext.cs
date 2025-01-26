@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using WorkHunter.Models.Entities;
+using WorkHunter.Models.Entities.WHunter;
 
 namespace WorkHunter.Data;
 
@@ -28,6 +29,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
     public WorkHunterDbContext(DbContextOptions<WorkHunterDbContext> options) : base(options)
     {
     }
+
+    public DbSet<WResponse> Responses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -57,6 +60,19 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
                   .WithMany(x => x.UserRoles)
                   .HasForeignKey(x => x.UserId)
                   .IsRequired();
+        });
+
+        builder.Entity<WResponse>(entity =>
+        {
+            entity.HasOne(x => x.User)
+                  .WithMany()
+                  .HasForeignKey(x => x.UserId)
+                  .IsRequired();
+
+            entity.Property(x => x.Email).HasMaxLength(200);
+            entity.Property(x => x.AnswerText).HasMaxLength(4000);
+            entity.Property(x => x.Contact).HasMaxLength(800);
+            entity.Property(x => x.VacancyUrl).HasMaxLength(400);
         });
     }
 }
