@@ -12,8 +12,8 @@ using WorkHunter.Data;
 namespace WorkHunter.Data.Migrations
 {
     [DbContext(typeof(WorkHunterDbContext))]
-    [Migration("20250126132035_UpdateUsers")]
-    partial class UpdateUsers
+    [Migration("20250126144451_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

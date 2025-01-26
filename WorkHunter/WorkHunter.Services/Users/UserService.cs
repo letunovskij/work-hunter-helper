@@ -67,7 +67,7 @@ public sealed class UserService : IUserService
 
         if (!await userManager.CheckPasswordAsync(user, dto.Password))
             throw new ArgumentException("Неверный логин или пароль!");
-        var user1 = await dbContext.Users.Include(x => x.UserRoles).FirstOrDefaultAsync(x => x.Email == dto.Email);
+        
         return await GenerateTokens(user);
     }
 
@@ -82,6 +82,7 @@ public sealed class UserService : IUserService
     private Task<User?> GetUser(string? userName)
         => dbContext.Users
                     .Include(x => x.UserRoles)
+                        .ThenInclude(x => x.Role)
                     .FirstOrDefaultAsync(x => x.UserName == userName);
 
     private void CheckPossibilityToLoginAtUser(User user)

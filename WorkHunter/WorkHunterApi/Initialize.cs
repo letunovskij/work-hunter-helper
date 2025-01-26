@@ -14,7 +14,7 @@ internal static class Initialize
         await SeedRoles(roleManager);
         await dbContext.SaveChangesAsync();
 
-        await SeedUsers(userManager);
+        await SeedUsers(userManager, dbContext);
         await dbContext.SaveChangesAsync();
     }
 
@@ -30,16 +30,16 @@ internal static class Initialize
             await manager.CreateAsync(new IdentityRole(role));
     }
 
-    public static async Task SeedUsers(UserManager<User> manager)
+    public static async Task SeedUsers(UserManager<User> manager, IWorkHunterDbContext dbContext)
     {
-        await SeedUser(manager, new() { Name = "OLTest", UserName = "olluntest@mail.ru", Email = "olluntest@mail.ru" }, "WH!2025Admin", AppRoles.Admin);
-        await SeedUser(manager, new() { Name = "Admin@testuser.com", UserName = "Admin@testuser.com", Email = "Admin@testuser.com" }, "2025AdminWh!", AppRoles.Admin);
-        await SeedUser(manager, new() { Name = "User@testuser.com", UserName = "User@testuser.com", Email = "User@testuser.com" }, "2025UserWh!", AppRoles.User);
+        await SeedUser(manager, new() { Name = "OLTest", UserName = "olluntest@mail.ru", Email = "olluntest@mail.ru" }, "WH!2025Admin", dbContext, AppRoles.Admin);
+        await SeedUser(manager, new() { Name = "Admin@testuser.com", UserName = "Admin@testuser.com", Email = "Admin@testuser.com" }, "2025AdminWh!", dbContext, AppRoles.Admin);
+        await SeedUser(manager, new() { Name = "User@testuser.com", UserName = "User@testuser.com", Email = "User@testuser.com" }, "2025UserWh!", dbContext, AppRoles.User);
     }
 
-    private static async Task SeedUser(UserManager<User> manager, User user, string? password, params string[] roles)
+    private static async Task SeedUser(UserManager<User> manager, User user, string? password, IWorkHunterDbContext dbContext, params string[] roles)
     {
-        var existedUser = await manager.FindByNameAsync(user.Name);
+        var existedUser = await manager.FindByNameAsync(user.UserName);
 
         if (existedUser == null)
         {
@@ -47,10 +47,11 @@ internal static class Initialize
             var result = !string.IsNullOrEmpty(password)
                          ? await manager.CreateAsync(user, password)
                          : await manager.CreateAsync(user);
+            await dbContext.SaveChangesAsync();
 
             if (result.Succeeded)
             {
-                existedUser = await manager.FindByNameAsync(user.Name);
+                existedUser = await manager.FindByNameAsync(user.UserName);
                 await manager.AddToRolesAsync(existedUser!, roles);
             }
         }
