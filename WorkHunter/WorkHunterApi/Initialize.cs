@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WorkHunter.Data;
 using WorkHunter.Models.Constants;
-using WorkHunter.Models.Entities;
+using WorkHunter.Models.Entities.Users;
 
 namespace WorkHunter.Api;
 

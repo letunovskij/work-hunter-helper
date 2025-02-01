@@ -9,7 +9,8 @@ public sealed class EntityNotFoundException : Exception
     public EntityNotFoundException(string message, Exception innerException) : base(message, innerException) { }
 
     public EntityNotFoundException(string name, string id) 
-        : base($"Запись: {name} id: {id} не найдена!") 
-    {
-    }
+        : base($"Запись: {name} id: {id} не найдена!") { }
+
+    public EntityNotFoundException(string name, Guid id)
+        : base($"Запись: {name} id: {id} не найдена!") { }
 }

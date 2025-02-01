@@ -1,7 +1,11 @@
-﻿using WorkHunter.Models.Enums;
+﻿using WorkHunter.Models.Entities.Users;
+using WorkHunter.Models.Enums;
 
-namespace WorkHunter.Models.Entities.WHunter;
+namespace WorkHunter.Models.Entities.WorkHunters;
 
+/// <summary>
+/// Отклик пользователя приложения WorkHunter на вакансию
+/// </summary>
 public sealed class WResponse : Entity
 {
     public ResponseStatus Status { get; set; }
@@ -27,10 +31,19 @@ public sealed class WResponse : Entity
 
     public bool ViewedByMe { get; set; }
 
+    /// <summary>
+    /// Контакты работодателя
+    /// </summary>
     public string? Contact { get; set; }
 
+    /// <summary>
+    /// Ответ работодателя на отклик
+    /// </summary>
     public string? AnswerText { get; set; }
 
+    /// <summary>
+    /// Почта работодателя
+    /// </summary>
     public string? Email { get; set; }
 
     public required string VacancyUrl { get; set; }

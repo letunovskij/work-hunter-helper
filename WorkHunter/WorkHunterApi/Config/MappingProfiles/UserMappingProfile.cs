@@ -1,10 +1,10 @@
 ﻿using Mapster;
-using WorkHunter.Models.Entities;
+using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Views.Users;
 
 namespace WorkHunter.Api.Config.MappingProfiles;
 
-public class UserMappingProfile : IRegister
+public sealed class UserMappingProfile : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

@@ -14,7 +14,7 @@ using WorkHunter.Api.Middleware;
 using WorkHunter.Data;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Constants;
-using WorkHunter.Models.Entities;
+using WorkHunter.Models.Entities.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,7 +106,6 @@ builder.Services.RegisterApplicationServices(builder.Configuration);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -115,6 +114,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapUserEndpoints();
+app.MapWResponsesEndpoints();
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using WorkHunter.Models.Entities;
-using WorkHunter.Models.Entities.WHunter;
+using WorkHunter.Models.Entities.Users;
+using WorkHunter.Models.Entities.WorkHunters;
 
 namespace WorkHunter.Data;
 
@@ -30,7 +30,7 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
     {
     }
 
-    public DbSet<WResponse> Responses { get; set; }
+    public DbSet<WResponse> WResponses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -65,7 +65,7 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
         builder.Entity<WResponse>(entity =>
         {
             entity.HasOne(x => x.User)
-                  .WithMany()
+                  .WithMany(x => x.Responses)
                   .HasForeignKey(x => x.UserId)
                   .IsRequired();
 

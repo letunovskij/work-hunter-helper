@@ -13,7 +13,7 @@ using System.Text;
 using WorkHunter.Data;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users;
-using WorkHunter.Models.Entities;
+using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Views.Users;
 
 public sealed class UserService : IUserService
