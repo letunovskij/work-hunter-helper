@@ -15,9 +15,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PROJECT_NAME: WorkHunter.Api
+      PROJECT_API_NAME: WorkHunter.Api
+      PROJECT_API_PATH_NAME: WorkHunterApi
       PROJECT_NAME_TESTS: WorkHunter.UnitTests
-      PROJECT_PATH: WorkHunter/WorkHunterApi
+      PROJECT_PATH: WorkHunter
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -25,8 +26,8 @@ jobs:
       with:
         dotnet-version: 9.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.PROJECT_PATH }}/${{ env.PROJECT_PATH }}.sln
     - name: Build
-      run: dotnet build ${{ env.PROJECT_PATH }}/${{ env.PROJECT_NAME }}/${{ env.PROJECT_NAME }}.csproj -c Release -o content --no-restore
+      run: dotnet build ${{ env.PROJECT_PATH }}/${{ env.PROJECT_API_PATH_NAME }}/${{ env.PROJECT_NAME }}/${{ PROJECT_API_NAME }}.csproj -c Release -o content --no-restore
     - name: Test
       run: dotnet test ${{ env.PROJECT_PATH }}/${{ env.PROJECT_NAME_TESTS }}/${{ env.PROJECT_NAME_TESTS }}.csproj --no-build --verbosity normal
