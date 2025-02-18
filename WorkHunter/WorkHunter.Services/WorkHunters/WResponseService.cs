@@ -65,12 +65,12 @@ public sealed class WResponseService : IWResponseService
         return await GetById(wResponse.Id);
     }
 
-    private static void SetStatusForWResponse(WResponse response, WResponseUpdateDto dto)
+    internal static void SetStatusForWResponse(WResponse response, WResponseUpdateDto dto)
     {
         if (dto is WResponseCreateDto)
             response.Status = ResponseStatus.Open;
 
-        if (string.IsNullOrEmpty(dto.AnswerText))
+        if (!string.IsNullOrEmpty(dto.AnswerText))
             response.Status = ResponseStatus.InitiallyViewedByEmployee;
 
         if (dto.IsAnswered != null && dto.IsAnswered.Value)
