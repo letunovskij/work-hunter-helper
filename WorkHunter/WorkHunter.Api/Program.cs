@@ -119,10 +119,10 @@ app.MapWResponsesEndpoints();
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {
     var scope = app.Services.CreateScope();
-    await Initialize.SeedData(
-        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
-        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-        scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
+    //await Initialize.SeedData(
+    //    scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
+    //    scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
+    //    scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
     scope.Dispose();
 }
 

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkHunter.Api", "WorkHunterApi\WorkHunter.Api.csproj", "{6F65B8C5-5DAB-4668-ABB4-E3EBE014BA90}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.Models", "WorkHunter.Models\WorkHunter.Models.csproj", "{B5332A93-EA07-469E-9824-EFFA47F8DF5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.Data", "WorkHunter.Data\WorkHunter.Data.csproj", "{9D7705A8-94A3-4762-AF7D-777897C931BB}"
@@ -17,16 +15,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.UnitTests", "WorkHunter.UnitTests\WorkHunter.UnitTests.csproj", "{25B8B0DD-5FB7-4F46-A101-1EAE1A9D77C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.Api", "WorkHunter.Api\WorkHunter.Api.csproj", "{6CA139A4-0C76-434C-82E9-536F63FDA3FB}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6F65B8C5-5DAB-4668-ABB4-E3EBE014BA90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6F65B8C5-5DAB-4668-ABB4-E3EBE014BA90}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6F65B8C5-5DAB-4668-ABB4-E3EBE014BA90}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6F65B8C5-5DAB-4668-ABB4-E3EBE014BA90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5332A93-EA07-469E-9824-EFFA47F8DF5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5332A93-EA07-469E-9824-EFFA47F8DF5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5332A93-EA07-469E-9824-EFFA47F8DF5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +49,14 @@ Global
 		{25B8B0DD-5FB7-4F46-A101-1EAE1A9D77C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25B8B0DD-5FB7-4F46-A101-1EAE1A9D77C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25B8B0DD-5FB7-4F46-A101-1EAE1A9D77C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CA139A4-0C76-434C-82E9-536F63FDA3FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CA139A4-0C76-434C-82E9-536F63FDA3FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CA139A4-0C76-434C-82E9-536F63FDA3FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CA139A4-0C76-434C-82E9-536F63FDA3FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
