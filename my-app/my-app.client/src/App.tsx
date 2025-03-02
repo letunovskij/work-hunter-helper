@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext } from 'react';
+﻿import { useEffect, useState, createContext } from 'react';
 import './App.css';
 
 interface Forecast {
@@ -24,14 +24,14 @@ interface Fact {
     total: number;//332
 }
 
-const DemoContext = createContext({ message: '????', updateMessage: (msg: string) => { } });
+const DemoContext = createContext({ message: 'Тест', updateMessage: (msg: string) => { } });
 
 function MyComponent({ fact }) {
     //const [facts, setFacts] = useState<Fact[]>();
     //const level = useContext(LevelContext);
     return (
         <div>
-            fact
+            fact.current_page
         </div>
     );
 }
@@ -61,7 +61,10 @@ function MyButton() {
     }
 
     return (
-        <div>
+        <div
+            style={{
+                color: 'green'
+            }}>
             <button onClick={populateNinjaFactsData}>
                 Click me
             </button>
