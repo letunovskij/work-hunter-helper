@@ -16,7 +16,7 @@ jobs:
 
     env:
       PROJECT_API_NAME: WorkHunter.Api
-      PROJECT_API_PATH_NAME: WorkHunterApi
+      PROJECT_API_PATH_NAME: WorkHunter.Api
       PROJECT_NAME_TESTS: WorkHunter.UnitTests
       PROJECT_PATH: WorkHunter
     steps:
