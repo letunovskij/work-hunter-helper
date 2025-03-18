@@ -1,0 +1,2 @@
+2025-03-11 16:33:55.730 +03:00 [WRN] Storing keys in a directory 'C:\Users\ContainerUser\AppData\Local\ASP.NET\DataProtection-Keys' that may not be persisted outside of the container. Protected data will be unavailable when container is destroyed. For more information go to https://aka.ms/aspnet/dataprotectionwarning
+2025-03-11 17:20:32.322 +03:00 [WRN] Failed to determine the https port for redirect.
