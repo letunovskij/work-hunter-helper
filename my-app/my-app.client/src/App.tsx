@@ -11,53 +11,48 @@ interface Forecast {
 interface Fact {
     current_page: number;// 1,
     data: string;
-    first_page_url: string;// "https://catfact.ninja/facts?page=1",
-    from: number;// 1,
-    last_page: number;// 34,
-    last_page_url: number;//"https://catfact.ninja/facts?page=34",
-    links: string;
-    next_page_url: string;// "https://catfact.ninja/facts?page=2",
-    path: string;//"https://catfact.ninja/facts",
-    per_page: number;//10,
-    prev_page_url: string;//null,
-    to: number;//10,
-    total: number;//332
+    first_page_url?: string;// "https://catfact.ninja/facts?page=1",
+    from?: number;// 1,
+    last_page?: number;// 34,
+    last_page_url?: number;//"https://catfact.ninja/facts?page=34",
+    links?: string;
+    next_page_url?: string;// "https://catfact.ninja/facts?page=2",
+    path?: string;//"https://catfact.ninja/facts",
+    per_page?: number;//10,
+    prev_page_url?: string;//null,
+    to?: number;//10,
+    total?: number;//332
 }
 
-const DemoContext = createContext({ message: 'Тест', updateMessage: (msg: string) => { } });
+var DemoContext = createContext({ message: 'Тест', updateMessage: (msg: string) => { } });
 
-function MyComponent({ fact }) {
-    //const [facts, setFacts] = useState<Fact[]>();
-    //const level = useContext(LevelContext);
+function MyComponent({ facts }: { facts: Fact[] | undefined }) {
+    //const [stateFacts, setStateFacts] = useState<Fact[] | undefined>(facts);
+    //setStateFacts(facts);
+
     return (
         <div>
-            fact.current_page
+            facts[0].current_page
         </div>
     );
 }
 
+//const dataHandler = (data: dataType) => { работаем с данными }
+
 function MyButton() { 
     const [facts, setFacts] = useState<Fact[]>();
 
-    async function populateNinjaFactsData() {
+    async function populateNinjaFactsData(): Promise<Fact[] | undefined> {
         const response = await fetch('https://catfact.ninja/facts');
         if (response.ok) {
             const data = await response.json();
             setFacts(data);
-
         }
-
+        setFacts([{ data: "test", current_page: 200 }] );
         const DemoContext = createContext(facts);
         console.log(facts);
-    }
 
-    //updateMessage = (msg: string) => {
-    //    console.log('DemoContextProvider.updateMessage:', msg);
-    //    this.setState({ message: facts });
-    //};
-
-    function handleClick() {
-        alert('You clicked me!');
+        return facts;
     }
 
     return (
@@ -65,65 +60,22 @@ function MyButton() {
             style={{
                 color: 'green'
             }}>
-            <button onClick={populateNinjaFactsData}>
+            <button onClick = { () => populateNinjaFactsData() }>
                 Click me
             </button>
-            <MyComponent fact={facts[0]}/>
+            <MyComponent facts={facts}/>
         </div>
     );
 }
 
 
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
-
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
-
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-
-            <MyComponent />
+            <h1 id="tableLabel">Test React (useState is not compiled to js)</h1>
             <MyButton />
-
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
         </div>
     );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
-
 }
 
 export default App;
