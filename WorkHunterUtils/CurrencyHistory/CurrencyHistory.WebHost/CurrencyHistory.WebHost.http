@@ -1,0 +1,6 @@
+@CurrencyHistory.WebHost_HostAddress = http://localhost:5082
+
+GET {{CurrencyHistory.WebHost_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

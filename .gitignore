@@ -340,3 +340,4 @@ ASALocalRun/
 
 .vscode/
 /WorkHunter/WorkHunter.Api/logs
+/WorkHunterUtils/CurrencyHistory/CurrencyHistory.WebHost/Logs
