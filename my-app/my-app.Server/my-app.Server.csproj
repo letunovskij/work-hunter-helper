@@ -9,7 +9,7 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <SpaRoot>..\my-app.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:52672</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:52674</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,43 +1,43 @@
-﻿import { Component, createContext } from 'react';
+﻿//import { Component, createContext } from 'react';
 
-interface DemoContextStateContract {
-    message: string;
-}
+//interface DemoContextStateContract {
+//    message: string;
+//}
 
-// Создаем контекст
-const DemoContext = createContext({ message: 'Сообщение из Context!', updateMessage: (msg: string) => { } });
+//// Создаем контекст
+//const DemoContext = null;// createContext({ message: 'Сообщение из Context!', updateMessage: (msg: string) => { } });
 
 
-class DemoContextComponent extends Component<{}, DemoContextStateContract> {
-    constructor(props: {}) {
-        super(props);
+//class DemoContextComponent extends Component<{}, DemoContextStateContract> {
+//    constructor(props: {}) {
+//        super(props);
 
-        this.state = {
-            message: 'Сообщение из DemoContextProvider!'
-        };
+//        this.state = {
+//            message: 'Сообщение из DemoContextProvider!'
+//        };
 
-    }
+//    }
 
-    updateMessage = (msg: string) => {
-        console.log('DemoContextProvider.updateMessage:', msg);
-        this.setState({ message: msg });
-    };
+//    updateMessage = (msg: string) => {
+//        console.log('DemoContextProvider.updateMessage:', msg);
+//        this.setState({ message: msg });
+//    };
 
-    render() {
-        return (
-            <DemoContext.Provider
-                value={{
-                    message: this.state.message,
-                    updateMessage: this.updateMessage
-                }}
-            >
-                <h1>Пример использования Context</h1>
-            </DemoContext.Provider>
-        );
-    }
-}
+//    render() {
+//        return (
+//            <DemoContext.Provider
+//                value={{
+//                    message: this.state.message,
+//                    updateMessage: this.updateMessage
+//                }}
+//            >
+//                <h1>Пример использования Context</h1>
+//            </DemoContext.Provider>
+//        );
+//    }
+//}
 
-export { DemoContextComponent as DemoContextProvider, DemoContext };
+//export { DemoContextComponent as DemoContextProvider, DemoContext };
 //function MyButton() {
 //    const [facts, setFacts] = useState<Fact[]>();
 

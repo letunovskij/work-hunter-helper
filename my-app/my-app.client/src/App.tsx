@@ -1,9 +1,9 @@
 ﻿import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import $ from 'jquery';
+/*import $ from 'jquery';*/
 import 'bootstrap/dist/js/bootstrap.bundle.min';
-import { DemoContextProvider } from './Components/DemoContextProvider';
-import { LevelThree } from './Components/LevelThree';
+/*import { DemoContextProvider } from './Components/DemoContextProvider';*/ //fake?
+/*import { LevelThree } from './Components/LevelThree';*/ // fake?
 import { AdvancedCalc } from './Components/AdvancedCalc';
 import { BasicPureComponentDemo } from './Components/BasicPlaceholderPureComponent';
 import { FactsButton } from './Components/FactComponent';
@@ -20,11 +20,12 @@ const App: React.FC = () => {
             {/* <OutletApp /> */}
             <NavigateApp />
             <CurrencyRates />
-            {/*<FactsButton />*/}
-            {/*<BasicPureComponentDemo />*/}
-            {/*<AdvancedCalc />*/}
-            {/*<DemoContextProvider />*/}
-            {/*<LevelThree />*/}
+
+            <FactsButton />
+            <BasicPureComponentDemo />
+            <AdvancedCalc />
+{/*            <DemoContextProvider />*/}
+{/*            <LevelThree />*/}
         </div>
     );
 };
