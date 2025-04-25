@@ -32,4 +32,8 @@
     <ProjectReference Include="..\WorkHunterUtils.Services\WorkHunterUtils.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
 </Project>

@@ -2,10 +2,12 @@
 using Prometheus;
 using WorkHunterUtils.Abstractions.Currencies;
 using WorkHunterUtils.Abstractions.HttpClients;
+using WorkHunterUtils.Abstractions.Services;
 using WorkHunterUtils.BackgroundTasks.Tasks;
 using WorkHunterUtils.Models.Options;
 using WorkHunterUtils.Services.Currencies;
 using WorkHunterUtils.Services.HttpClients;
+using WorkHunterUtils.Services.Services.EmailSenders;
 
 namespace CurrencyHistory.WebHost;
 
@@ -44,12 +46,17 @@ internal static class ServiceConfiguration
     private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<ICurrencyService, CurrencyService>();
+        services.AddScoped<IEmailService, EmailService>();
     }
 
     public static void RegisterOptions(IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptionsWithValidateOnStart<CurrencyOptions>()
                 .Bind(configuration.GetSection("BackgroundTaskOptions:CurrencyOptions"))
+                .ValidateDataAnnotations();
+
+        services.AddOptionsWithValidateOnStart<EmailOptions>()
+                .Bind(configuration.GetSection("EmailOptions"))
                 .ValidateDataAnnotations();
     }
 }
