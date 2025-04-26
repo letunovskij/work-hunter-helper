@@ -1,0 +1,34 @@
+<label>Веб клиент</label>
+
+<div *ngIf="userInfo != undefined && !userInfo.isAuthenticated">
+  <div>
+    <label>Логин</label>
+    <input type="text" value="" [(ngModel)]="login" />
+  </div>
+  <br />
+  <div>
+    <label>Пароль</label>
+    <input title="Пароль" type="text" value="" [(ngModel)]="password" />
+  </div>
+</div>
+<br />
+<div>{{ userInfo.isAuthenticated ? 'Вход выполнен по схеме "' + userInfo.scheme + '"' : 'Вход не выполнен' }}</div>
+
+<div>
+  <button *ngIf="userInfo.isAuthenticated"
+          (click)="logout()">Выйти</button>
+</div>
+<br />
+<div>
+  <button *ngIf="!userInfo.isAuthenticated"
+          (click)="authenticate(login, password)">Войти</button>
+</div>
+<br />
+<div>
+  <button (click)="checkAnonymousRoute()">Отправить запрос в метод, доступный анонимным пользователям</button>
+</div>
+<br />
+<div>
+  <button (click)="checkJwtProtectedRoute()">Отправить запрос в метод, требующий авторизацию</button>
+</div>
+<br />
