@@ -26,10 +26,12 @@ import {environment} from "../environments/environment";
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    },
-    {
-      provide: 'BASE_URL',
-      useValue: environment.apiUrl }
+    }
+    //},
+    //{
+    //  provide: 'BASE_URL'
+    //}
+      //useValue: environment.apiUrl }
   ],
   bootstrap: [AppComponent]
 })

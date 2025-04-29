@@ -69,7 +69,12 @@ export class AuthComponent implements OnInit {
   public checkAnonymousRoute(): void {
     this
       .httpClient
-      .post(`${this.baseUrl}/protected/method`, null)
+      .get(`http://localhost:62549/user`, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Referrer-Policy': 'origin'
+        }
+      })
       .subscribe(result => alert(result), error => alert(error.status));
   }
   private setSession(authResult: string) {

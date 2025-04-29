@@ -15,11 +15,13 @@ internal static class UserEndpoints
 
         routeGroup.MapGet("current", async (IUserService service) => await service.GetCurrent())
             .RequireAuthorization(AppPolicies.All)
-            .WithDescription("Получить текущего пользователя");
+            .WithDescription("Получить текущего пользователя")
+            .RequireCors(options => options.AllowAnyOrigin());
 
         routeGroup.MapGet(string.Empty, async (IUserService service) => await service.GetAll())
             //.RequireAuthorization(AppPolicies.Admin)
-            .WithDescription("Получить список всех пользователей");
+            .WithDescription("Получить список всех пользователей")
+            .RequireCors(options => options.AllowAnyOrigin()); 
 
         routeGroup.MapPost("token", async ([FromBody] LoginDto dto, IUserService service) => await service.Login(dto))
             .WithDescription("Получить токен доступа");

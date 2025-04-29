@@ -41,17 +41,28 @@ builder.Services.AddOpenApiDocument(config =>
     config.Version = "v1";
 });
 
+var MyAllowSpecificOrigins = "_MyAllowSubdomainPolicy";
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(corsPolicyBuilder =>
-    {
-        corsPolicyBuilder
-            .WithOrigins(builder.Configuration.GetValue<string>("Cors").Split(','))
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
-            .WithExposedHeaders("Content-Disposition");
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            var origins = builder.Configuration.GetValue<string>("Cors").Split(',');
+            policy.WithOrigins(origins)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowAnyOrigin();
+        });
+
+    //options.AddDefaultPolicy(corsPolicyBuilder =>
+    //{
+    //    corsPolicyBuilder
+    //        .WithOrigins(builder.Configuration.GetValue<string>("Cors").Split(','))
+    //        .AllowAnyMethod()
+    //        .AllowAnyHeader()
+    //        .AllowCredentials()
+    //        .WithExposedHeaders("Content-Disposition");
+    //});
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -109,7 +120,7 @@ builder.Services.AddProblemDetails();
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
