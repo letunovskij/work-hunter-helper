@@ -9,5 +9,9 @@ public interface IUserService
 
     Task<TokensView> Login(LoginDto dto);
 
+    Task<UserView> GetById(string userId);
+
     Task<IReadOnlyList<UserBaseView>> GetAll();
+
+    Task<UserView> Create(UserCreateDto dto);
 }

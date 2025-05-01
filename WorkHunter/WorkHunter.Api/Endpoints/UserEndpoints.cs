@@ -9,7 +9,7 @@ internal static class UserEndpoints
 {
     internal static void MapUserEndpoints(this IEndpointRouteBuilder routes)
     {
-        var routeGroup = routes.MapGroup("user")
+        var routeGroup = routes.MapGroup("users")
                                .WithTags("User")
                                .WithOpenApi();
 
@@ -25,5 +25,8 @@ internal static class UserEndpoints
 
         routeGroup.MapPost("token", async ([FromBody] LoginDto dto, IUserService service) => await service.Login(dto))
             .WithDescription("Получить токен доступа");
+
+        routeGroup.MapPost("create", async ([FromBody] UserCreateDto dto, IUserService service) => await service.Create(dto))
+            .WithDescription("Создать нового пользователя");
     }
 }

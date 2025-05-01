@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using WorkHunter.Data;
@@ -23,6 +24,11 @@ public sealed class UserService : IUserService
     private readonly AuthOptions authOptions;
     private readonly IWorkHunterDbContext dbContext;
     private readonly IValidator<LoginDto> loginValidator;
+
+    private const string upper = "QWERTYUIOPASDFGHJKLZXCVBNM";
+    private const string lower = "qwertyuaiopsdfgzhjklxcvbnm";
+    private const string digit = "1234567890";
+    private const string special = "!@#$%^&*(){}:|?><,/?:%;№!";
 
     public UserService(
         UserManager<User> userManager,
@@ -69,6 +75,73 @@ public sealed class UserService : IUserService
             throw new ArgumentException("Неверный логин или пароль!");
         
         return await GenerateTokens(user);
+    }
+
+    public async Task<UserView> GetById(string userId)
+    {
+        return await dbContext.Users
+                              .ProjectToType<UserView>()
+                              .SingleOrDefaultAsync(x => x.Id == userId)
+                               ?? throw new EntityNotFoundException(userId, nameof(User));
+    }
+
+    public async Task<UserView> Create(UserCreateDto dto)
+    {
+        var user = new User()
+        {
+            Name = dto.Name,
+            UserName = dto.UserName,
+            Email = dto.Email,
+        };
+
+        await CreateUser(user, GenerateRandomPassword(), dto.Roles);
+
+        await dbContext.SaveChangesAsync();
+
+        return await this.GetById(user.Id);
+    }
+
+    private string GenerateRandomPassword(PasswordOptions? options = null)
+    {
+        options ??= userManager.Options.Password;
+
+        string[] charsSource = new[] { upper, lower, special, digit };
+        StringBuilder password = new(options.RequiredLength);
+
+        if (options.RequireUppercase)
+            password.Append(charsSource[0][RandomNumberGenerator.GetInt32(charsSource[0].Length)]);
+
+        if (options.RequireLowercase)
+            password.Append(charsSource[1][RandomNumberGenerator.GetInt32(charsSource[1].Length)]);
+
+        if (options.RequireNonAlphanumeric)
+            password.Append(charsSource[2][RandomNumberGenerator.GetInt32(charsSource[2].Length)]);
+
+        if (options.RequireDigit)
+            password.Append(charsSource[3][RandomNumberGenerator.GetInt32(charsSource[3].Length)]);
+
+        for (int i = password.Length; i <= options.RequiredLength || charsSource.Distinct().Count() < options.RequiredUniqueChars; i++)
+        {
+            string nextChar = charsSource[RandomNumberGenerator.GetInt32(charsSource.Length)];
+            password.Append(nextChar);
+        }
+
+        return password.ToString();
+    }
+
+    private async Task CreateUser(User user, string password, IReadOnlyList<string> roles)
+    {
+        var userResult = await userManager.CreateAsync(user, password);
+        if (!userResult.Succeeded)
+            throw new BusinessErrorException(string.Join(" ,", userResult.Errors.Select(x => x.Description)));
+
+        if (roles?.Count > 0)
+        {
+            var roleResult = await userManager.AddToRolesAsync(user, roles);
+
+            if (!roleResult.Succeeded)
+                throw new BusinessErrorException(string.Join(" ,", roleResult.Errors.Select(x => x.Description)));
+        }
     }
 
     #region private
