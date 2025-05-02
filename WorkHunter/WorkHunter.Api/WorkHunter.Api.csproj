@@ -37,4 +37,8 @@
     <ProjectReference Include="..\WorkHunter.Services\WorkHunter.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Templates\WResponses\" />
+  </ItemGroup>
+
 </Project>

@@ -7,7 +7,7 @@ namespace WorkHunter.Api.Endpoints;
 
 internal static class UserEndpoints
 {
-    internal static void MapUserEndpoints(this IEndpointRouteBuilder routes)
+    internal static void MapUsersEndpoints(this IEndpointRouteBuilder routes)
     {
         var routeGroup = routes.MapGroup("users")
                                .WithTags("User")

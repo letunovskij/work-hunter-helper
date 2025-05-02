@@ -8,20 +8,29 @@ using WorkHunter.Models.Entities.WorkHunters;
 using WorkHunter.Models.Views.WorkHunters;
 using Abstractions.Users;
 using WorkHunter.Models.Enums;
+using Common.Models;
+using Common.Utils;
+using ClosedXML.Excel;
+using Common.Enums;
+using WorkHunter.Models.Enums.Import;
+using Common.Extensions;
 
 namespace WorkHunter.Services.WorkHunters;
 
 public sealed class WResponseService : IWResponseService
 {
-    private readonly IWorkHunterDbContext dbContext;
+    private readonly WorkHunterDbContext dbContext;
     private readonly IUserService userService;
+    private readonly IWResponseImportService wresponseImportService;
 
     public WResponseService(
-        IWorkHunterDbContext dbContext,
-        IUserService userService)
+        WorkHunterDbContext dbContext,
+        IUserService userService,
+        IWResponseImportService wresponseImportService)
     {
         this.dbContext = dbContext;
         this.userService = userService;
+        this.wresponseImportService = wresponseImportService;
     }
 
     public async Task<WResponseView> GetById(Guid guid)
@@ -114,5 +123,47 @@ public sealed class WResponseService : IWResponseService
         wResponse.IsDeleted = true;
 
         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<DownloadFile?> ImportNewData(Stream stream)
+    {
+        var workbook = new XLWorkbook(stream);
+        await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            await dbContext.WResponses.ExecuteDeleteAsync();
+            await ImportData(workbook, ImportMode.RemoveAllThenAdd);
+
+            await transaction.CommitAsync();
+            return null;
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            dbContext.ChangeTracker.Clear();
+
+            return ExcelUtils.DownloadFile(workbook, $"wresponses-error-{DateTime.Now:s}");
+        }
+    }
+
+    private async Task ImportData(XLWorkbook workbook, ImportMode mode)
+    {
+        var wresponsesWorksheet = workbook.Worksheets.First(x => x.Name == WresponsePageType.WresponsePage.GetDescription());
+
+        wresponseImportService.ImportDataToCollection(wresponsesWorksheet);
+        if (mode == ImportMode.Add)
+            await wresponseImportService.CheckOnExists();
+
+        var error = await wresponseImportService.AddToDb();
+        if (error != null)
+            wresponseImportService.UpdatePageWithError(wresponsesWorksheet);
+
+        await dbContext.SaveChangesAsync();
+    }
+
+    public Task Export()
+    {
+        throw new NotImplementedException();
     }
 }

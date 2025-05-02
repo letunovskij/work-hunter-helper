@@ -24,7 +24,8 @@ public static class ServicesConfiguration
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWResponseService, WResponseService>();
-        
+        services.AddScoped<IWResponseImportService, WResponseImportService>();
+
         return services;
     }
 }
