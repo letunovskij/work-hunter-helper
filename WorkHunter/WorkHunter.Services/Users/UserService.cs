@@ -85,6 +85,20 @@ public sealed class UserService : IUserService
                                ?? throw new EntityNotFoundException(userId, nameof(User));
     }
 
+    public async Task<UserView> Edit(UserEditDto dto)
+    {
+        var currentUser = await GetUser(currentUserPrincipal?.Identity?.Name);
+        if (currentUser == null)
+            throw new EntityNotFoundException("Пользователь не найден");
+
+        currentUser.Name = dto.Name;
+        currentUser.Email = dto.Email;
+
+        var updatingResult = await userManager.UpdateAsync(currentUser);
+
+        return await GetById(currentUser.Id);
+    }
+
     public async Task<UserView> Create(UserCreateDto dto)
     {
         var user = new User()

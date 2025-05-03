@@ -14,4 +14,6 @@ public interface IUserService
     Task<IReadOnlyList<UserBaseView>> GetAll();
 
     Task<UserView> Create(UserCreateDto dto);
+
+    Task<UserView> Edit(UserEditDto dto);
 }

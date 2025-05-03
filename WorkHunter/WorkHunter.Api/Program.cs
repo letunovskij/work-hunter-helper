@@ -124,8 +124,9 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapUserEndpoints();
+app.MapUsersEndpoints();
 app.MapWResponsesEndpoints();
+app.MapImportEndpoints();
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {

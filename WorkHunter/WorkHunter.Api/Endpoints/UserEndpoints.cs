@@ -28,5 +28,9 @@ internal static class UserEndpoints
 
         routeGroup.MapPost("create", async ([FromBody] UserCreateDto dto, IUserService service) => await service.Create(dto))
             .WithDescription("Создать нового пользователя");
+
+        routeGroup.MapPost("edit", async ([FromBody] UserEditDto dto, IUserService service) => await service.Edit(dto))
+            .RequireAuthorization(AppPolicies.All)
+            .WithDescription("Редактировать текущего пользователя");
     }
 }

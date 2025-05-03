@@ -7,7 +7,7 @@ namespace WorkHunter.Api.Endpoints;
 
 internal static class ImportEndpoints
 {
-    internal static void MapUserEndpoints(this IEndpointRouteBuilder routes)
+    internal static void MapImportEndpoints(this IEndpointRouteBuilder routes)
     {
         var routeGroup = routes.MapGroup("transfers")
                                .WithTags("Transfer")
