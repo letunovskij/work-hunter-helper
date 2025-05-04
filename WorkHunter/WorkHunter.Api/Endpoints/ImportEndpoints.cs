@@ -13,11 +13,11 @@ internal static class ImportEndpoints
                                .WithTags("Transfer")
                                .WithOpenApi();
 
-        routeGroup.MapPost("WResponses/export", async (IWResponseService service) => await service.Export())
+        routeGroup.MapPost("WResponses/export", async (IWResponseImportService service) => await service.Export())
             .RequireAuthorization(AppPolicies.Admin)
             .WithDescription("Экспортировать тестовые отклики");
 
-        routeGroup.MapPost("WResponses/import", async ([FromForm] IFormFile formFile, IWResponseService service)
+        routeGroup.MapPost("WResponses/import", async ([FromForm] IFormFile formFile, IWResponseImportService service)
             => 
         {
             var fileModel = await service.ImportNewData(formFile.OpenReadStream());

@@ -15,8 +15,4 @@ public interface IWResponseService
     Task<WResponseView> Update(Guid guid, WResponseUpdateDto dto);
 
     Task Delete(Guid guid);
-
-    Task Export();
-
-    Task<DownloadFile?> ImportNewData(Stream stream);
 }

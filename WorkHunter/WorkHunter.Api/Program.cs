@@ -1,3 +1,4 @@
+using Common.Exceptions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -47,11 +48,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         policy =>
         {
-            var origins = builder.Configuration.GetValue<string>("Cors").Split(',');
-            policy.WithOrigins(origins)
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowAnyOrigin();
+            var origins = builder.Configuration.GetValue<string>("Cors")?.Split(',');
+            if (origins != null && origins.Length > 0)
+            {
+                policy.WithOrigins(origins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowAnyOrigin();
+            }
         });
 
     //options.AddDefaultPolicy(corsPolicyBuilder =>
@@ -80,6 +84,8 @@ builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config 
 });
 
 var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>();
+if (authOptions == null)
+    throw new BusinessErrorException("Auth Options ?? ????????????????");
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
