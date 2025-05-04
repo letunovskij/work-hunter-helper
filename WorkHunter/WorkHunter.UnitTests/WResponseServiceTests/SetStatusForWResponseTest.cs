@@ -14,7 +14,7 @@ public sealed class SetStatusForWResponseTest
     [TestMethod]
     public void SetStatusForWResponseTest_SetStatusInitiallyViewedByMe()
     {
-        Mock<IWorkHunterDbContext> mockWorkHunterDbContext = new();
+        Mock<WorkHunterDbContext> mockWorkHunterDbContext = new();
         Mock<IUserService> mockUserService = new();
         var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
 
@@ -28,7 +28,7 @@ public sealed class SetStatusForWResponseTest
     [TestMethod]
     public void SetStatusForWResponseTest_SetStatusInitiallyViewedByEmployee()
     {
-        Mock<IWorkHunterDbContext> mockWorkHunterDbContext = new();
+        Mock<WorkHunterDbContext> mockWorkHunterDbContext = new();
         Mock<IUserService> mockUserService = new();
         var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
 
