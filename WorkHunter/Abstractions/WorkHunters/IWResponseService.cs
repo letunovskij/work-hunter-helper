@@ -1,5 +1,4 @@
-﻿using Common.Models;
-using WorkHunter.Models.Dto.WorkHunters;
+﻿using WorkHunter.Models.Dto.WorkHunters;
 using WorkHunter.Models.Views.WorkHunters;
 
 namespace WorkHunter.Abstractions.WorkHunters;

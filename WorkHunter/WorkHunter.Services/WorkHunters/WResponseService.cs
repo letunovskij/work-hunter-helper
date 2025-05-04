@@ -12,11 +12,11 @@ namespace WorkHunter.Services.WorkHunters;
 
 public sealed class WResponseService : IWResponseService
 {
-    private readonly WorkHunterDbContext dbContext;
+    private readonly IWorkHunterDbContext dbContext;
     private readonly IUserService userService;
 
     public WResponseService(
-        WorkHunterDbContext dbContext,
+        IWorkHunterDbContext dbContext,
         IUserService userService)
     {
         this.dbContext = dbContext;
