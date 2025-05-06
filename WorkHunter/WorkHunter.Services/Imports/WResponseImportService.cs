@@ -20,17 +20,10 @@ namespace WorkHunter.Services.Imports
 
         private Dictionary<int, WResponseImportModel> ImportingKeyValuePairs { get; set; } = [];
 
-        private const string TemplateFolder = "WResponses";
-
-        private const string TemplateName = "WResponsesTemplate.xlsx";
-
         public WResponseImportService(WorkHunterDbContext dbContext, ILogger<WResponseImportService> logger) : base(logger) 
         {
             this.dbContext = dbContext;
         }
-
-        public DownloadFile DownloadWResponsesTemplate()
-            => FileUtils.ReadTemplateFile(TemplateFolder, TemplateName);
 
         public async Task<DownloadFile?> ImportNewData(Stream stream)
         {
@@ -123,11 +116,6 @@ namespace WorkHunter.Services.Imports
 
         // TODO проверить наличие в БД перед импортом
         public Task CheckOnExists()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Export()
         {
             throw new NotImplementedException();
         }

@@ -1,10 +1,13 @@
 ﻿using Abstractions.Users;
+using Common.Exceptions;
 using FluentValidation;
 using System.Security.Principal;
+using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Abstractions.WorkHunters;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users.Validators;
+using WorkHunter.Services.Exports;
 using WorkHunter.Services.Imports;
 using WorkHunter.Services.WorkHunters;
 
@@ -20,13 +23,15 @@ public static class ServicesConfiguration
                 .ValidateOnStart();
 
         services.AddHttpContextAccessor()
-                .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>().HttpContext?.User);
+                .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User 
+                                         ?? throw new BusinessErrorException("IHttpContextAccessor не сконфигурирован!"));
 
         services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWResponseService, WResponseService>();
         services.AddScoped<IWResponseImportService, WResponseImportService>();
+        services.AddScoped<IWResponsesExportService, WResponsesExportService>();        
 
         return services;
     }

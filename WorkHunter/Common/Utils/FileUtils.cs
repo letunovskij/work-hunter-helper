@@ -16,7 +16,7 @@ namespace Common.Utils
             return new DownloadFile { Name = fileName, Data = memoryStream };
         }
 
-        public static DownloadFile ReadTemplateFile(string templateFolder, string templateName)
+        public static DownloadFile ReadTemplateFile(string? templateFolder, string? templateName)
         {
             var appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(appPath))

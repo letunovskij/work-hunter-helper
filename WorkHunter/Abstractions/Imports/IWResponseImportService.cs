@@ -6,9 +6,7 @@ namespace WorkHunter.Abstractions.Imports
 {
     public interface IWResponseImportService : IPageImportService
     {
-        Task Export();
         Task<DownloadFile?> ImportNewData(Stream stream);
         Task CheckOnExists();
-        DownloadFile DownloadWResponsesTemplate();
     }
 }

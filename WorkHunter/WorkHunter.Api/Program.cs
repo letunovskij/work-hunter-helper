@@ -85,7 +85,8 @@ builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config 
 
 var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>();
 if (authOptions == null)
-    throw new BusinessErrorException("Auth Options ?? ????????????????");
+    throw new BusinessErrorException("Auth Options is not configured!");
+
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
