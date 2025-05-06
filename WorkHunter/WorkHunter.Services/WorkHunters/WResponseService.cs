@@ -81,7 +81,7 @@ public sealed class WResponseService : IWResponseService
         var currentUser = await userService.GetCurrent();
 
         var wResponse = await dbContext.WResponses.SingleOrDefaultAsync(x => x.UserId == currentUser.Id
-                                                                         && x.Id == guid)
+                                                                          && x.Id == guid)
             ?? throw new EntityNotFoundException(nameof(WResponse), guid);
 
         CheckIsDeleted(wResponse);
@@ -105,7 +105,7 @@ public sealed class WResponseService : IWResponseService
         var currentUser = await userService.GetCurrent();
 
         var wResponse = await dbContext.WResponses.SingleOrDefaultAsync(x => x.UserId == currentUser.Id
-                                                                         && x.Id == guid)
+                                                                          && x.Id == guid)
             ?? throw new EntityNotFoundException(nameof(WResponse), guid);
 
         CheckIsDeleted(wResponse);

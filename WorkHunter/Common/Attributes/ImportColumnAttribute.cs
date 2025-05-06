@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Common.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Property)]
     public sealed class ImportColumnAttribute : ImportHeaderAttribute
     {
         public bool IsRequired { get; set; }

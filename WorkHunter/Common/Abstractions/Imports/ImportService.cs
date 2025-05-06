@@ -1,10 +1,9 @@
 ﻿using ClosedXML.Excel;
+using Common.Abstractions.Imports;
 using Common.Attributes;
-using Common.Enums;
-using Common.Models;
+using Common.Constants.Imports;
 using Common.Models.Imports;
 using Common.Utils;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,11 +11,8 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using WorkHunter.Abstractions.Imports;
-using WorkHunter.Models.Constants.Import;
 
-namespace WorkHunter.Services.Imports
+namespace Common.Abstractions.Imports
 {
     public abstract class ImportService<TImportModel> : IImportService
         where TImportModel : IImportModel
@@ -219,6 +215,18 @@ namespace WorkHunter.Services.Imports
                         RowNumber = this.PageHeaderNumber,
                     });
             }
+        }
+
+        public void AddNotFoundError<TValue>(int rowNumber, string columnNumber, TValue value, string tableName)
+        {
+            var (number, letter) = this.ColumnDictionary[columnNumber];
+            this.ImportExceptions.Add(new()
+            {
+                Message = $"В таблице {tableName} не найдено значение {value} ячейки {rowNumber}{letter}!",
+                RowNumber = rowNumber,
+                ColumnNumber = number,
+                ColumnLetter = letter
+            });
         }
 
         public virtual void UpdateImportingPageWithErrors(IXLWorksheet worksheet)

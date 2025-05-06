@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkHunter.Abstractions.Imports
+namespace Common.Abstractions.Imports
 {
     public interface IImportService
     {

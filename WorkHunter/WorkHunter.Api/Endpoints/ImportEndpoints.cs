@@ -1,6 +1,6 @@
 ﻿using Abstractions.Users;
 using Microsoft.AspNetCore.Mvc;
-using WorkHunter.Abstractions.WorkHunters;
+using WorkHunter.Abstractions.Imports;
 using WorkHunter.Models.Constants;
 
 namespace WorkHunter.Api.Endpoints;
