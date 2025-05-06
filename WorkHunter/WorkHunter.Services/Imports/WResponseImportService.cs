@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Common.Abstractions.Imports;
 using Common.Enums;
+using Common.Exceptions;
 using Common.Extensions;
 using Common.Models;
 using Common.Utils;
@@ -31,9 +32,13 @@ namespace WorkHunter.Services.Imports
             try
             {
                 await dbContext.WResponses.ExecuteDeleteAsync();
-                await ImportData(workbook, ImportMode.RemoveAllThenAdd);
+                var isError = await ImportData(workbook, ImportMode.RemoveAllThenAdd);
+
+                if (isError)
+                    throw new ImportException(); 
 
                 await transaction.CommitAsync();
+
                 return null;
             }
             catch (Exception)
@@ -41,11 +46,11 @@ namespace WorkHunter.Services.Imports
                 await transaction.RollbackAsync();
                 dbContext.ChangeTracker.Clear();
 
-                return ExcelUtils.DownloadFile(workbook, $"wresponses-error-{DateTime.Now:s}");
+                return ExcelUtils.DownloadFile(workbook, $"wresponses-error-{DateTime.Now:s}.xlsx");
             }
         }
 
-        private async Task ImportData(XLWorkbook workbook, ImportMode mode)
+        private async Task<bool> ImportData(XLWorkbook workbook, ImportMode mode)
         {
             var wresponsesWorksheet = workbook.Worksheets.First(x => x.Name == WresponsePageType.WresponsePage.GetDescription());
 
@@ -58,6 +63,8 @@ namespace WorkHunter.Services.Imports
                 UpdateImportingPageWithErrors(wresponsesWorksheet);
 
             await dbContext.SaveChangesAsync();
+
+            return this.ImportExceptions.Count > 0;
         }
 
         public bool ImportToCollection(IXLWorksheet wresponsesWorksheet)

@@ -15,7 +15,7 @@ namespace WorkHunter.Models.Import
         [ImportColumn(Name = WResponseImportModelConstants.Email, IsRequired = false)]
         public string? Email { get; set; }
 
-        [ImportColumn(Name = WResponseImportModelConstants.Email, IsRequired = true)]
+        [ImportColumn(Name = WResponseImportModelConstants.UserId, IsRequired = true)]
         public string? UserId { get; set; }
 
         [ImportColumn(Name = WResponseImportModelConstants.VacancyUrl, IsRequired = true)]

@@ -1,5 +1,4 @@
-﻿using Abstractions.Users;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Models.Constants;
 
@@ -7,6 +6,8 @@ namespace WorkHunter.Api.Endpoints;
 
 internal static class ImportEndpoints
 {
+    private static string ExcelReportDefaultFileType = "application/octet-stream";
+
     internal static void MapImportEndpoints(this IEndpointRouteBuilder routes)
     {
         var routeGroup = routes.MapGroup("transfers")
@@ -21,8 +22,9 @@ internal static class ImportEndpoints
             => 
         {
             var fileModel = await service.ImportNewData(formFile.OpenReadStream());
-            return fileModel == null ? Results.Ok() : Results.File(fileModel.Data, "application/octet-stream");
+            return fileModel == null ? Results.Ok() : Results.File(fileModel.Data, ExcelReportDefaultFileType, fileModel.Name);
         })
+            .DisableAntiforgery()
             .RequireAuthorization(AppPolicies.Admin)
             .WithDescription("Импортировать тестовые отклики");
     }
