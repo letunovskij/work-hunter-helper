@@ -1,10 +1,11 @@
 ﻿using ClosedXML.Excel;
+using Common.Exceptions;
 using Common.Models;
 using System.Reflection;
 
 namespace Common.Utils
 {
-    public static class ExcelUtils
+    public static class FileUtils
     {
         public static DownloadFile DownloadFile(XLWorkbook xLWorkbook, string fileName)
         {
@@ -15,12 +16,16 @@ namespace Common.Utils
             return new DownloadFile { Name = fileName, Data = memoryStream };
         }
 
-        public static DownloadFile ReadTemplateFile(string templateFolder, string templateName, string templateExtension)
+        public static DownloadFile ReadTemplateFile(string templateFolder, string templateName)
         {
             var appPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var filePath = Path.Combine(appPath, "Templates", $"{templateFolder}", $"{templateName}{templateExtension}");
+            if (string.IsNullOrEmpty(appPath))
+                throw new BusinessErrorException("Не удалось определить расположение исполняемого приложения.");
+
+            var filePath = Path.Combine(appPath, "Templates", $"{templateFolder}", $"{templateName}");
             var data = File.OpenRead(filePath);
-            return new DownloadFile { Name = $"{templateName}{templateExtension}", Data = data };
+            return new DownloadFile { Name = $"{templateName}", Data = data };
         }
+
     }
 }

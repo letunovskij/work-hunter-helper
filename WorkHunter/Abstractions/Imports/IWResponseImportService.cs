@@ -9,5 +9,6 @@ namespace WorkHunter.Abstractions.Imports
         Task Export();
         Task<DownloadFile?> ImportNewData(Stream stream);
         Task CheckOnExists();
+        DownloadFile DownloadWResponsesTemplate();
     }
 }

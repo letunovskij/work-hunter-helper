@@ -41,4 +41,10 @@
     <Folder Include="Templates\WResponses\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Templates\WResponses\WResponsesTemplate.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

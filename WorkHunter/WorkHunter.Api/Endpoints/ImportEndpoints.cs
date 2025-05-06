@@ -18,6 +18,14 @@ internal static class ImportEndpoints
             .RequireAuthorization(AppPolicies.Admin)
             .WithDescription("Экспортировать тестовые отклики");
 
+        routeGroup.MapPost("WResponses/export-template", (IWResponseImportService service)
+            =>
+        {
+            var fileModel = service.DownloadWResponsesTemplate();
+            return Results.File(fileModel.Data, ExcelReportDefaultFileType, fileModel.Name);
+        })
+            .WithDescription("Скачать шаблон для загрузки существующих откликов в систему.");
+
         routeGroup.MapPost("WResponses/import", async ([FromForm] IFormFile formFile, IWResponseImportService service)
             => 
         {
@@ -26,6 +34,6 @@ internal static class ImportEndpoints
         })
             .DisableAntiforgery()
             .RequireAuthorization(AppPolicies.Admin)
-            .WithDescription("Импортировать тестовые отклики");
+            .WithDescription("Импортировать тестовые отклики.");
     }
 }
