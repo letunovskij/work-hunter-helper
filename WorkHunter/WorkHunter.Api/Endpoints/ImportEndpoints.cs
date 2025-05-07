@@ -16,7 +16,7 @@ internal static class ImportEndpoints
                                .WithTags("Transfer")
                                .WithOpenApi();
 
-        routeGroup.MapPost("WResponses/export", async (IWResponsesExportService service)
+        routeGroup.MapGet("WResponses/export", async (IWResponsesExportService service)
             =>
         {
             var fileModel = await service.ExportToExcel();
@@ -25,7 +25,7 @@ internal static class ImportEndpoints
             .RequireAuthorization(AppPolicies.Admin)
             .WithDescription("Экспортировать тестовые отклики");
 
-        routeGroup.MapPost("WResponses/export-template", (IWResponsesExportService service)
+        routeGroup.MapGet("WResponses/export-template", (IWResponsesExportService service)
             =>
         {
             var fileModel = service.DownloadTemplate();

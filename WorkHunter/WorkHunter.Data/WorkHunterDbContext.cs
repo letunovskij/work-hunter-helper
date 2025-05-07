@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using WorkHunter.Models.Entities.Interviews;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
+using WorkHunter.Models.Enums;
 
 namespace WorkHunter.Data;
 
@@ -31,6 +33,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
     }
 
     public DbSet<WResponse> WResponses { get; set; }
+
+    public DbSet<VideoInterviewFile> VideoInterviewFiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -73,6 +77,27 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
             entity.Property(x => x.AnswerText).HasMaxLength(4000);
             entity.Property(x => x.Contact).HasMaxLength(800);
             entity.Property(x => x.VacancyUrl).HasMaxLength(400);
+
+            entity.Property(x => x.Status).HasDefaultValue(ResponseStatus.Open);
+            entity.Property(x => x.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        builder.Entity<VideoInterviewFile>(entity =>
+        {
+            entity.HasOne(x => x.CreatedBy)
+                  .WithMany(x => x.VideoInterviewFiles)
+                  .HasForeignKey(x => x.CreatedById)
+                  .IsRequired();
+
+            entity.HasOne(x => x.WResponse)
+                  .WithMany(x => x.VideoInterviewFiles)
+                  .HasForeignKey(x => x.WResponseId)
+                  .IsRequired();
+
+            entity.Property(x => x.Name).HasMaxLength(200);
+            entity.Property(x => x.Path).HasMaxLength(400);
+            entity.Property(x => x.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(x => x.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
     }
 }

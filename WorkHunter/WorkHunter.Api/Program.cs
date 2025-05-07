@@ -134,6 +134,7 @@ app.UseAuthorization();
 app.MapUsersEndpoints();
 app.MapWResponsesEndpoints();
 app.MapImportEndpoints();
+app.MapVideoInterviewEndpoints();
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {

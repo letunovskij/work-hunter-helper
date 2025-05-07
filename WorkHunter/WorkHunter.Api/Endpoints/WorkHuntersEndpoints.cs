@@ -9,8 +9,8 @@ internal static class WorkHuntersEndpoints
 {
     internal static void MapWResponsesEndpoints(this IEndpointRouteBuilder routes)
     {
-        var routeGroup = routes.MapGroup("response")
-                               .WithTags("Response")
+        var routeGroup = routes.MapGroup("responses")
+                               .WithTags("Responses")
                                .WithOpenApi();
 
         routeGroup.MapGet(string.Empty, async (IWResponseService service)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WorkHunter.Models.Entities.Interviews;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
 
@@ -9,6 +10,8 @@ public interface IWorkHunterDbContext
     DbSet<User> Users { get; set; }
 
     DbSet<WResponse> WResponses { get; set; }
+
+    DbSet<VideoInterviewFile> VideoInterviewFiles { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

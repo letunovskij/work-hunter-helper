@@ -40,9 +40,17 @@ namespace WorkHunter.Services.Files
 
         protected abstract Task CheckUserAccessToFile(TFile file);
 
-        protected abstract Task CheckUserAccessToFileContainterEntity(int entityId);
+        protected abstract Task CheckUserAccessToFileContainterEntity(Guid entityId);
 
-        protected abstract Func<int, string[]> GetFilePathAsArray { get; }
+        protected Action<TFile> UpdateFile;
+
+        private string[] GetFilePathAsArray(Guid entityId)
+            => new string[]
+               {
+                  StorageOptions.BasePath,
+                  StorageOptions.VideoStorageFolder,
+                  entityId.ToString()
+               };
 
         public virtual async Task Delete(int fileId)
         {
@@ -59,11 +67,10 @@ namespace WorkHunter.Services.Files
                                         .FirstOrDefaultAsync(x => x.Id == fileId)
             ?? throw new EntityNotFoundException(fileId.ToString(), typeof(TFile).Name);
 
-        public virtual async Task<IReadOnlyList<FileView>> GetAll(int containerEntityId)
+        public virtual async Task<IReadOnlyList<FileView>> GetAll(Guid containerEntityId)
         {
             await CheckUserAccessToFileContainterEntity(containerEntityId);
             return await WorkHunterDbContext.Set<TFile>()
-                                //.Where(GetAllFilters
                                             .ProjectToType<FileView>()
                                             .ToListAsync();
         }
@@ -79,20 +86,18 @@ namespace WorkHunter.Services.Files
             return content;
         }
 
-        public virtual async Task<IReadOnlyList<TFile>> Upload(int entityId, IEnumerable<UploadFileDto> files, bool doValidation = true)
+        public virtual async Task<IReadOnlyList<TFile>> Upload(Guid entityId, IEnumerable<UploadFileDto> files, bool doValidation = true)
         {
             await CheckUserAccessToFileContainterEntity(entityId);
             // TODO video-api/#51 : System Limitation on users files
             // var filesCount = await WorkHunterDbContext.Set<TFile>().CountAsync(GetAllFilter(entityId));
 
-            return await UploadFiles(files, GetFilePathAsArray(entityId), StorageOptions, doValidation); // filesCount
+            return await UploadFiles(files, GetFilePathAsArray(entityId), doValidation); // filesCount
         }
 
         // TODO move in new common class
-        private async Task<IReadOnlyList<TFile>> UploadFiles(IEnumerable<UploadFileDto> files, 
-            string[] strings, StorageOptions storageOptions, bool doValidation = true)
+        private async Task<IReadOnlyList<TFile>> UploadFiles(IEnumerable<UploadFileDto> files, string[] strings, bool doValidation = true)
         {
-
             var directoryPath = Path.Combine(strings);
 
             if (doValidation)
@@ -119,6 +124,7 @@ namespace WorkHunter.Services.Files
                     entityFile.CreatedDate = DateTime.UtcNow;
                     entityFile.Path = filePath;
                     entityFile.Name = file.FileName;
+                    UpdateFile.Invoke(entityFile);
 
                     created.Add(entityFile);
                     WorkHunterDbContext.Set<TFile>().Add(entityFile);
@@ -137,7 +143,7 @@ namespace WorkHunter.Services.Files
 
         private void ValidateFiles(IEnumerable<UploadFileDto> files, StorageOptions storageOptions, string filesDirectoryPath)
         {
-            throw new NotImplementedException();
+            ;
         }
     }
 }

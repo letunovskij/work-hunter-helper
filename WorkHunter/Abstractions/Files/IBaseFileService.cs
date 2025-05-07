@@ -19,7 +19,7 @@ namespace WorkHunter.Abstractions.Files
         /// <param name="uploadFileModels">Список загружаемых файлов</param>
         /// <param name="doValidation">Требуется ли валидация на размер и формат</param>
         /// <returns></returns>
-        Task<IReadOnlyList<TFile>> Upload(int entityId, IEnumerable<UploadFileDto> uploadFileModels, bool doValidation = true);
+        Task<IReadOnlyList<TFile>> Upload(Guid entityId, IEnumerable<UploadFileDto> uploadFileModels, bool doValidation = true);
 
         Task<TFile> GetFileById(int fileId);
 
@@ -28,7 +28,7 @@ namespace WorkHunter.Abstractions.Files
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        Task<IReadOnlyList<FileView>> GetAll(int entityId);
+        Task<IReadOnlyList<FileView>> GetAll(Guid entityId);
 
         /// <summary>
         /// Получить содержимое файла по идентификатору

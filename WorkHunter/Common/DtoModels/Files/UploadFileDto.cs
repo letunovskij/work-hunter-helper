@@ -8,7 +8,7 @@ namespace Common.DtoModels.Files
 {
     public sealed record UploadFileDto
     {
-        public string? FileName { get; set; }
+        public required string FileName { get; set; }
 
         public long Length { get; set; }
 

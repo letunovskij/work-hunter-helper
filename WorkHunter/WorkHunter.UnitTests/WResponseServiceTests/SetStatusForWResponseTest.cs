@@ -18,7 +18,7 @@ public sealed class SetStatusForWResponseTest
         Mock<IUserService> mockUserService = new();
         var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
 
-        var wResponse = new WResponse() { Id = new Guid(), IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
+        var wResponse = new WResponse() { IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
         WResponseService.SetStatusForWResponse(wResponse, new WResponseUpdateDto() { AnswerText = "", IsAnswered= true });
 
         Assert.IsFalse(wResponse.IsAnswered);
@@ -32,7 +32,7 @@ public sealed class SetStatusForWResponseTest
         Mock<IUserService> mockUserService = new();
         var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
 
-        var wResponse = new WResponse() { Id = new Guid(), IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
+        var wResponse = new WResponse() { IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
         WResponseService.SetStatusForWResponse(wResponse, new WResponseUpdateDto() { AnswerText = "Response from employee", IsAnswered = false });
 
         Assert.IsFalse(wResponse.IsAnswered);
