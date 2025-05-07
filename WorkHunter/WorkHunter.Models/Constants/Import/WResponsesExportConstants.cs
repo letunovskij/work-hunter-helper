@@ -4,6 +4,6 @@
     {
         public const string WresponsePage = "WResponses";
         public const string HresponsePage = "";
-        public const string UserPage = "";
+        public const string UserPage = "Users";
     }
 }

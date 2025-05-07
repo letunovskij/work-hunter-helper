@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Models.Constants;
@@ -15,7 +16,12 @@ internal static class ImportEndpoints
                                .WithTags("Transfer")
                                .WithOpenApi();
 
-        routeGroup.MapPost("WResponses/export", async (IWResponsesExportService service) => await service.Export())
+        routeGroup.MapPost("WResponses/export", async (IWResponsesExportService service)
+            =>
+        {
+            var fileModel = await service.ExportToExcel();
+            return Results.File(fileModel.Data, ExcelReportDefaultFileType, fileModel.Name);
+        })
             .RequireAuthorization(AppPolicies.Admin)
             .WithDescription("Экспортировать тестовые отклики");
 

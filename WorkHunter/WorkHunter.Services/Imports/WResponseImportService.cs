@@ -47,7 +47,7 @@ namespace WorkHunter.Services.Imports
                 await transaction.RollbackAsync();
                 dbContext.ChangeTracker.Clear();
 
-                return FileUtils.DownloadFile(workbook, $"wresponses-error-{DateTime.Now:s}.xlsx");
+                return FileUtils.ExportWorkbookToStream(workbook, $"wresponses-error-{DateTime.Now:s}.xlsx");
             }
         }
 

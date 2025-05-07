@@ -10,6 +10,6 @@ namespace WorkHunter.Abstractions.Exports
 {
     public interface IWResponsesExportService : IExportService
     {
-        Task Export();
+        Task<DownloadFile> ExportToExcel();
     }
 }

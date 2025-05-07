@@ -4,13 +4,16 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WorkHunter.Models.Entities.WorkHunters;
+using WorkHunter.Models.Constants.Import;
 
 namespace WorkHunter.Models.Enums.Import
 {
     public enum WresponsePageType
     {
-        [Description("WResponses")]
-        WresponsePage = 1
+        [Description(WResponsesExportConstants.UserPage)]
+        UserPage = 1,
+
+        [Description(WResponsesExportConstants.WresponsePage)]
+        WresponsePage = 2
     }
 }

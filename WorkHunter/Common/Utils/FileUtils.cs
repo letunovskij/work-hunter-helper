@@ -7,7 +7,7 @@ namespace Common.Utils
 {
     public static class FileUtils
     {
-        public static DownloadFile DownloadFile(XLWorkbook xLWorkbook, string fileName)
+        public static DownloadFile ExportWorkbookToStream(XLWorkbook xLWorkbook, string fileName)
         {
             var memoryStream = new MemoryStream();
             xLWorkbook.SaveAs(memoryStream);
