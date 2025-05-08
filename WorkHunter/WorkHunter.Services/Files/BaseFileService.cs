@@ -86,6 +86,7 @@ namespace WorkHunter.Services.Files
             return content;
         }
 
+        // TODO video-api/#51: made generic key for container entity, or generic container entity
         public virtual async Task<IReadOnlyList<TFile>> Upload(Guid entityId, IEnumerable<UploadFileDto> files, bool doValidation = true)
         {
             await CheckUserAccessToFileContainterEntity(entityId);
@@ -95,7 +96,7 @@ namespace WorkHunter.Services.Files
             return await UploadFiles(files, GetFilePathAsArray(entityId), doValidation); // filesCount
         }
 
-        // TODO move in new common class
+        // TODO video-api/#51: move in new common class
         private async Task<IReadOnlyList<TFile>> UploadFiles(IEnumerable<UploadFileDto> files, string[] strings, bool doValidation = true)
         {
             var directoryPath = Path.Combine(strings);
@@ -143,7 +144,32 @@ namespace WorkHunter.Services.Files
 
         private void ValidateFiles(IEnumerable<UploadFileDto> files, StorageOptions storageOptions, string filesDirectoryPath)
         {
-            ;
+            // TODO video-api/#51: check total files count per entity
+            if (files.GroupBy(x => x.FileName).Any(x => x.Count() > 1))
+                throw new BusinessErrorException("Загружаемые файлы сущности должны иметь разные названия!");
+
+            if (files.Count() > storageOptions.MaxFileCount)
+                throw new BusinessErrorException("Превышено количество загружаемых файлов!");
+
+            foreach (var file in files)
+            {
+                if (file.Length > storageOptions.MaxFileSize)
+                    throw new BusinessErrorException($"Превышен допустимый размер загружаемоего файла {file.FileName}! Файл не может первышать {(double)storageOptions.MaxFileSize / 1024 / 1024}");
+
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+                if (!storageOptions.SupportedFormats.Contains(extension))
+                    throw new BusinessErrorException("Загружаемый файл недопустимого формата!");
+
+                CheckFileName(file.FileName);
+            }
+        }
+
+        private static void CheckFileName(string fileName)
+        {
+            var invalidCharacters = Path.GetInvalidFileNameChars();
+
+            if (fileName.IndexOfAny(invalidCharacters) >= 0)
+                throw new BusinessErrorException($"Файл {fileName} содержит в наименовании недопустимые симфолы!");
         }
     }
 }
