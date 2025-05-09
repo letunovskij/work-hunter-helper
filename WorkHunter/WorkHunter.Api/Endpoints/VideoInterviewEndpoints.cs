@@ -24,8 +24,6 @@ internal static class VideoInterviewEndpoints
             .RequireAuthorization(AppPolicies.All)
             .WithDescription("Скачать видео интервью отклика.");
 
-        // TODO: удалить файл по id
-
         // TODO: скачать превью файла
 
         // TODO: получить все видео-интервью по отклику
@@ -49,5 +47,11 @@ internal static class VideoInterviewEndpoints
             .DisableAntiforgery()
             .RequireAuthorization(AppPolicies.All)
             .WithDescription("Загрузить видео интервью отклика.");
+
+        routeGroup.MapDelete("{id:guid}/file/{fileId}", async (Guid id, int fileId, IVideoInterviewFileService service) =>
+        {
+            await service.Delete(fileId);
+        }).RequireAuthorization(AppPolicies.All)
+          .WithDescription("Загрузить видео интервью отклика.");
     }
 }
