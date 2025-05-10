@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using WorkHunter.Models.Entities.Interviews;
+using WorkHunter.Models.Entities.Notifications;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
 using WorkHunter.Models.Enums;
@@ -35,6 +36,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
     public DbSet<WResponse> WResponses { get; set; }
 
     public DbSet<VideoInterviewFile> VideoInterviewFiles { get; set; }
+
+    public DbSet<UserTaskType> UserTaskTypes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -98,6 +101,14 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
             entity.Property(x => x.Path).HasMaxLength(400);
             entity.Property(x => x.CreatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(x => x.UpdatedDate).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        builder.Entity<UserTaskType>(entity =>
+        {
+            entity.Property(x => x.TaskText).IsRequired();
+            entity.Property(x => x.TaskName).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.InitialNotificationSubject).HasMaxLength(200);
+            entity.Property(x => x.Recipient).HasMaxLength(200);
         });
     }
 }
