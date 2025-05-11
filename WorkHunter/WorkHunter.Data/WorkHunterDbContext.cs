@@ -39,6 +39,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
 
     public DbSet<UserTaskType> UserTaskTypes { get; set; }
 
+    public DbSet<UserTask> UserTasks { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -109,6 +111,28 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
             entity.Property(x => x.TaskName).HasMaxLength(200).IsRequired();
             entity.Property(x => x.InitialNotificationSubject).HasMaxLength(200);
             entity.Property(x => x.Recipient).HasMaxLength(200);
+        });
+
+        builder.Entity<UserTask>(entity =>
+        {
+            entity.Property(x => x.Text).IsRequired();
+            entity.Property(x => x.Completed).IsRequired(false);
+            entity.Property(x => x.CompletionReason).HasMaxLength(500);
+
+            entity.HasOne(x => x.Responsible)
+                  .WithMany(x => x.UserTasks)
+                  .HasForeignKey(x => x.ResponsibleId)
+                  .IsRequired();
+
+            entity.HasOne(x => x.WResponse)
+                  .WithMany(x => x.UserTasks)
+                  .HasForeignKey(x => x.WResponseId)
+                  .IsRequired();
+
+            entity.HasOne(x => x.Type)
+                  .WithMany(x => x.UserTasks)
+                  .HasForeignKey(x => x.TypeId)
+                  .IsRequired();
         });
     }
 }

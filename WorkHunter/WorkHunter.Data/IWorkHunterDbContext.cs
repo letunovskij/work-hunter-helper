@@ -16,6 +16,8 @@ public interface IWorkHunterDbContext
 
     DbSet<UserTaskType> UserTaskTypes { get; set; }
 
+    DbSet<UserTask> UserTasks { get; set; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     DbSet<TEntity> Set<TEntity>() where TEntity : class;

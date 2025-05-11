@@ -1,4 +1,5 @@
 ﻿using WorkHunter.Models.Entities.Interviews;
+using WorkHunter.Models.Entities.Notifications;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Enums;
 
@@ -50,4 +51,6 @@ public sealed class WResponse : Entity
     public required string VacancyUrl { get; set; }
 
     public ICollection<VideoInterviewFile>? VideoInterviewFiles { get; set; }
+
+    public ICollection<UserTask>? UserTasks { get; set; }
 }
