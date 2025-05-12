@@ -1,5 +1,6 @@
 ﻿using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
+using WorkHunter.Models.Enums;
 
 namespace WorkHunter.Models.Entities.Notifications;
 
@@ -19,13 +20,13 @@ public sealed class UserTask
 
     public DateTime? Completed { get; set; }
 
-    public TaskStatus Status { get; set; }
+    public UserTaskStatus Status { get; set; }
 
     public bool IsCompletedByHand {  get; set; }
 
     public string? CompletionReason { get; set; }
 
-    public required string Text { get; set; }
+    public string Text { get; set; }
 
     public DateTime LastNotificationDate { get; set; }
 

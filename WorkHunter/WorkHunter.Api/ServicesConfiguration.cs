@@ -6,12 +6,14 @@ using System.Security.Principal;
 using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Abstractions.Interviews;
+using WorkHunter.Abstractions.Notifications;
 using WorkHunter.Abstractions.WorkHunters;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users.Validators;
 using WorkHunter.Services.Exports;
 using WorkHunter.Services.Imports;
 using WorkHunter.Services.Interviews;
+using WorkHunter.Services.Notifications;
 using WorkHunter.Services.WorkHunters;
 
 namespace WorkHunter.Api;
@@ -40,7 +42,8 @@ public static class ServicesConfiguration
         services.AddScoped<IWResponseService, WResponseService>();
         services.AddScoped<IVideoInterviewFileService, VideoInterviewFileService>();
         services.AddScoped<IWResponseImportService, WResponseImportService>();
-        services.AddScoped<IWResponsesExportService, WResponsesExportService>();        
+        services.AddScoped<IWResponsesExportService, WResponsesExportService>();
+        services.AddScoped<ITaskService, TaskService>();
 
         return services;
     }

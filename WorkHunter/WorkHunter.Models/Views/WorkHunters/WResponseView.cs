@@ -1,4 +1,5 @@
 ﻿using WorkHunter.Models.Enums;
+using WorkHunter.Models.Views.Users;
 
 namespace WorkHunter.Models.Views.WorkHunters;
 
@@ -34,4 +35,6 @@ public sealed class WResponseView
     public string? Email { get; set; }
 
     public required string VacancyUrl { get; set; }
+
+    public required UserBaseView User { get; set; }
 }

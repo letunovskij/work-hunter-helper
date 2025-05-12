@@ -27,8 +27,11 @@ public sealed class WResponseService : IWResponseService
     {
         var currentUser = await userService.GetCurrent();
 
-        var response = await dbContext.WResponses.SingleOrDefaultAsync(x => x.Id == guid 
-                                                                         && x.UserId == currentUser.Id) 
+        var response = await dbContext.WResponses
+                                      .Include(x => x.User)
+                                      .AsNoTracking()
+                                      .SingleOrDefaultAsync(x => x.Id == guid 
+                                                              && x.UserId == currentUser.Id) 
             ?? throw new EntityNotFoundException(nameof(WResponse), guid);
 
         return response.Adapt<WResponseView>();
@@ -40,6 +43,7 @@ public sealed class WResponseService : IWResponseService
 
         var responses = await dbContext.WResponses.Where(x => x.UserId == currentUser.Id
                                                            && !x.IsDeleted)
+                                                  .Include(x => x.User)
                                                   .AsNoTracking()
                                                   .ToListAsync();
 
