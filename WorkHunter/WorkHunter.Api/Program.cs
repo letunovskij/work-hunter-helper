@@ -57,16 +57,6 @@ builder.Services.AddCors(options =>
                       .AllowAnyOrigin();
             }
         });
-
-    //options.AddDefaultPolicy(corsPolicyBuilder =>
-    //{
-    //    corsPolicyBuilder
-    //        .WithOrigins(builder.Configuration.GetValue<string>("Cors").Split(','))
-    //        .AllowAnyMethod()
-    //        .AllowAnyHeader()
-    //        .AllowCredentials()
-    //        .WithExposedHeaders("Content-Disposition");
-    //});
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
