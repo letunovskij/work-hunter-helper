@@ -5,9 +5,13 @@ using WorkHunter.Models.Entities.WorkHunters;
 
 namespace WorkHunter.Models.Entities.Users;
 
-public sealed class User : IdentityUser
+public sealed class User : IdentityUser<string>
 {
     public bool IsDeleted { get; set; }
+
+    public bool IsBlocked { get; set; }
+
+    public DateTime? DateBlocked { get; set; }
 
     public required string Name { get; set; }
 

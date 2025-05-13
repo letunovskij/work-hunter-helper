@@ -85,6 +85,18 @@ public sealed class UserService : IUserService
                                ?? throw new EntityNotFoundException(userId, nameof(User));
     }
 
+    public async Task<User?> GetByName(string userName) 
+        => await dbContext.Users.SingleOrDefaultAsync(x => string.Equals(x.NormalizedUserName, userName.ToUpper()));
+
+    public async Task<HashSet<User>> GetInRoles(params string[] roles)
+    {
+        HashSet<User> users = new();
+        foreach (var role in roles) 
+            users.UnionWith(await userManager.GetUsersInRoleAsync(role));
+
+        return users;
+    }
+
     public async Task<UserView> Edit(UserEditDto dto)
     {
         var currentUser = await GetUser(currentUserPrincipal?.Identity?.Name);

@@ -2,6 +2,7 @@
 using Common.Exceptions;
 using Common.Models.Files;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 // using Microsoft.Extensions.Configuration; // Common TODO: extract Report project, extract Background Tasks project
 using System.Reflection;
 using System.Security.Principal;
@@ -11,6 +12,7 @@ using WorkHunter.Abstractions.Imports;
 using WorkHunter.Abstractions.Interviews;
 using WorkHunter.Abstractions.Notifications;
 using WorkHunter.Abstractions.WorkHunters;
+using WorkHunter.Api.Middleware;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users.Validators;
 using WorkHunter.Models.MediatrNotifications.Wresponses;
@@ -28,6 +30,8 @@ public static class ServicesConfiguration
 {
     public static IServiceCollection RegisterApplicationServices(this IServiceCollection services, IConfiguration config)
     {
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler, UserAccessHandler>();
+
         services.AddOptions<AuthOptions>()
                 .Bind(config.GetSection("AuthOptions"))
                 .ValidateDataAnnotations()
