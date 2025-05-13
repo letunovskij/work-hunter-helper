@@ -13,9 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\EmailSender\EmailSender.csproj" />
-    <ProjectReference Include="..\..\..\WorkHunter\Common\Common.csproj" />
     <ProjectReference Include="..\WorkHunterUtils.Abstractions\WorkHunterUtils.Abstractions.csproj" />
-    <ProjectReference Include="..\WorkHunterUtils.Common\WorkHunterUtils.Common.csproj" />
     <ProjectReference Include="..\WorkHunterUtils.Data\WorkHunterUtils.Data.csproj" />
     <ProjectReference Include="..\WorkHunterUtils.Models\WorkHunterUtils.Models.csproj" />
   </ItemGroup>

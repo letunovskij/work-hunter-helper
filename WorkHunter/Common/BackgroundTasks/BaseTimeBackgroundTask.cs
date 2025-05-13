@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using WorkHunterUtils.Models.Options;
 
-namespace WorkHunter.BackgroundTasks;
+namespace Common.BackgroundTasks;
 
 public abstract class BaseTimeBackgroundTask<TService, TOptions> : BaseBackgroundTask<TService>
     where TService : notnull

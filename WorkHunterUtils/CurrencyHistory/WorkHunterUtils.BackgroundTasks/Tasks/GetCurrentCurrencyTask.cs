@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Common.BackgroundTasks;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using WorkHunter.BackgroundTasks;
 using WorkHunterUtils.Abstractions.Currencies;
 using WorkHunterUtils.Models.Options;
 
@@ -10,7 +10,7 @@ public sealed class GetCurrentCurrencyTask : BaseBackgroundTask<ICurrencyService
 {
     private readonly IOptionsMonitor<CurrencyOptions> taskOptions;
 
-    public override int Delay => BackgroundConstants.DefaultTaskDelay;
+    public override int Delay => Common.BackgroundTasks.BackgroundConstants.DefaultTaskDelay;
 
     public override bool IsEnabled => taskOptions.CurrentValue.IsEnable;
 

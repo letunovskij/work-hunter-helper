@@ -1,4 +1,6 @@
-﻿namespace WorkHunterUtils.Models.Options;
+﻿using Common.BackgroundTasks;
+
+namespace WorkHunterUtils.Models.Options;
 
 public sealed class CurrencyOptions : BaseBackgroundTaskOptions
 {

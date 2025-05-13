@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 
-namespace WorkHunter.BackgroundTasks;
+namespace Common.BackgroundTasks;
 
 public abstract class BaseBackgroundTask<T> : BackgroundService where T : notnull
 {

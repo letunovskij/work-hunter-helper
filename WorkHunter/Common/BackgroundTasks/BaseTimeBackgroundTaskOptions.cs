@@ -1,4 +1,4 @@
-﻿namespace WorkHunterUtils.Models.Options
+﻿namespace Common.BackgroundTasks
 {
     public class BaseTimeBackgroundTaskOptions : BaseBackgroundTaskOptions
     {
