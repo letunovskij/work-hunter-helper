@@ -126,6 +126,7 @@ app.MapWResponsesEndpoints();
 app.MapImportEndpoints();
 app.MapVideoInterviewEndpoints();
 app.MapTasksEndpoints();
+app.MapEnumEndpoints();
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {

@@ -5,6 +5,7 @@ using FluentValidation;
 // using Microsoft.Extensions.Configuration; // Common TODO: extract Report project, extract Background Tasks project
 using System.Reflection;
 using System.Security.Principal;
+using WorkHunter.Abstractions.Enums;
 using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Abstractions.Interviews;
@@ -13,6 +14,7 @@ using WorkHunter.Abstractions.WorkHunters;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users.Validators;
 using WorkHunter.Models.MediatrNotifications.Wresponses;
+using WorkHunter.Services.Enums;
 using WorkHunter.Services.Exports;
 using WorkHunter.Services.Imports;
 using WorkHunter.Services.Interviews;
@@ -53,6 +55,7 @@ public static class ServicesConfiguration
         services.AddScoped<IWResponsesExportService, WResponsesExportService>();
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<INotificationsService, NotificationsService>();
+        services.AddScoped<IEnumService, EnumService>();
 
         services.AddMediatR(cfg =>
         {
