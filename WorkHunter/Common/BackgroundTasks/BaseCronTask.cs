@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace Common.BackgroundTasks
 {
-    public abstract class BaseCronTask<TService> : IHostedService, IDisposable where TService : notnull
+    public abstract class BaseCronTask<TService, TOptions> : IHostedService, IDisposable where TService : notnull where TOptions : CronTaskOptions
     {
         private bool disposed = false;
 
@@ -18,12 +18,12 @@ namespace Common.BackgroundTasks
 
         private readonly IServiceProvider serviceProvider;
 
-        private readonly IOptionsMonitor<CronTaskOptions> cronOptions;
+        private readonly IOptionsMonitor<TOptions> cronOptions;
 
         public abstract Func<TService, Task> Action { get; }
 
         protected BaseCronTask(
-            IOptionsMonitor<CronTaskOptions> cronOptions,
+            IOptionsMonitor<TOptions> cronOptions,
             IServiceProvider serviceProvider,
             ILogger logger)
         {
@@ -48,13 +48,12 @@ namespace Common.BackgroundTasks
                     await ScheduleJob(cancellationToken);
                 }
 
+                if (timer != null) timer.Dispose();
                 timer = new System.Timers.Timer();
-                timer.Interval = delay.Milliseconds;
+                timer.Interval = delay.TotalMilliseconds;
 
                 timer.Elapsed += async (sender, args) =>
                 {
-                    timer.Dispose();
-
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         await DoWork(cancellationToken);

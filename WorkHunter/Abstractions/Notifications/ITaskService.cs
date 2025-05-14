@@ -18,5 +18,5 @@ public interface ITaskService
 
     Task<bool> CreateTask(TaskType type, Guid wresponseId, UserTaskDto? dto = null);
 
-    Task SendReminderNotification();
+    Task SendReminderNotifications();
 }

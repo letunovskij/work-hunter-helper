@@ -106,7 +106,7 @@ public sealed class TaskService : ITaskService
         throw new NotImplementedException();
     }
 
-    public Task SendReminderNotification()
+    public Task SendReminderNotifications()
     {
         throw new NotImplementedException();
     }

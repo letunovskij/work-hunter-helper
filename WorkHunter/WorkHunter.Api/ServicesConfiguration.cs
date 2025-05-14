@@ -13,6 +13,7 @@ using WorkHunter.Abstractions.Interviews;
 using WorkHunter.Abstractions.Notifications;
 using WorkHunter.Abstractions.WorkHunters;
 using WorkHunter.Api.Middleware;
+using WorkHunter.BackgroundTasks;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Dto.Users.Validators;
 using WorkHunter.Models.MediatrNotifications.Wresponses;
@@ -46,9 +47,15 @@ public static class ServicesConfiguration
                 .Bind(config.GetSection("EmailOptions"))
                 .ValidateDataAnnotations();
 
+        services.AddOptionsWithValidateOnStart<SendUserTaskReminderNotificationOptions>()
+                .Bind(config.GetSection("CronOptions:SendUserTaskReminderNotificationOptions"))
+                .ValidateDataAnnotations();
+
         services.AddHttpContextAccessor()
                 .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User 
                                          ?? throw new BusinessErrorException("IHttpContextAccessor не сконфигурирован!"));
+
+        services.AddHostedService<SendUserTaskReminderNotificationTask>();
 
         services.AddValidatorsFromAssemblyContaining<LoginDtoValidator>();
 
