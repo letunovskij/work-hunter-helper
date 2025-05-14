@@ -48,12 +48,11 @@ public static class ServicesConfiguration
                 .ValidateDataAnnotations();
 
         services.AddOptionsWithValidateOnStart<SendUserTaskReminderNotificationOptions>()
-                .Bind(config.GetSection("CronOptions:SendUserTaskReminderNotificationOptions"))
+                .Bind(config.GetSection("BackgroundTasksOptions:SendUserTaskReminderNotificationOptions"))
                 .ValidateDataAnnotations();
 
-        services.AddHttpContextAccessor()
-                .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User 
-                                         ?? throw new BusinessErrorException("IHttpContextAccessor не сконфигурирован!"));
+        services.AddHttpContextAccessor();
+                //.AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User);
 
         services.AddHostedService<SendUserTaskReminderNotificationTask>();
 

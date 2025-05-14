@@ -2,6 +2,6 @@
 
 namespace WorkHunter.Models.Config;
 
-public sealed class SendUserTaskReminderNotificationOptions : CronTaskOptions
+public sealed class SendUserTaskReminderNotificationOptions : BaseTimeBackgroundTaskOptions
 {
 }

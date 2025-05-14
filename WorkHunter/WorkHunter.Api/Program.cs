@@ -17,7 +17,7 @@ using WorkHunter.Models.Config;
 using WorkHunter.Models.Constants;
 using WorkHunter.Models.Entities.Users;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder();
 
 builder.Services.AddAuthorization();
 builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration)

@@ -2,6 +2,7 @@
 using Common.Exceptions;
 using FluentValidation;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,7 +21,8 @@ using WorkHunter.Models.Views.Users;
 public sealed class UserService : IUserService
 {
     private readonly UserManager<User> userManager;
-    private readonly IPrincipal currentUserPrincipal;
+    //private readonly IPrincipal? currentUserPrincipal;
+    private readonly IHttpContextAccessor httpContextAccessor;
     private readonly AuthOptions authOptions;
     private readonly IWorkHunterDbContext dbContext;
     private readonly IValidator<LoginDto> loginValidator;
@@ -32,7 +34,8 @@ public sealed class UserService : IUserService
 
     public UserService(
         UserManager<User> userManager,
-        IPrincipal currentUserPrincipal,
+        IHttpContextAccessor httpContextAccessor,
+        //IPrincipal? currentUserPrincipal,
         IOptionsSnapshot<AuthOptions> authOptions,
         IWorkHunterDbContext dbContext,
         IValidator<LoginDto> loginValidator,
@@ -40,7 +43,8 @@ public sealed class UserService : IUserService
         )
     {
         this.userManager = userManager;
-        this.currentUserPrincipal = currentUserPrincipal;
+        //this.currentUserPrincipal = currentUserPrincipal;
+        this.httpContextAccessor = httpContextAccessor;
         this.authOptions = authOptions.Value;
         this.dbContext = dbContext;
         this.loginValidator = loginValidator;
@@ -57,10 +61,10 @@ public sealed class UserService : IUserService
 
     public async Task<UserBaseView> GetCurrent()
     {
-        if (string.IsNullOrEmpty(currentUserPrincipal.Identity?.Name))
+        if (string.IsNullOrEmpty(httpContextAccessor?.HttpContext?.User?.Identity?.Name))
             throw new UnauthorizedAccessException("Текущий пользователь не авторизован!");
 
-        return await GetByUserName(currentUserPrincipal.Identity.Name);
+        return await GetByUserName(httpContextAccessor.HttpContext.User.Identity.Name);
     }
 
     public async Task<TokensView> Login(LoginDto dto)
@@ -99,7 +103,7 @@ public sealed class UserService : IUserService
 
     public async Task<UserView> Edit(UserEditDto dto)
     {
-        var currentUser = await GetUser(currentUserPrincipal?.Identity?.Name);
+        var currentUser = await GetByName(dto.UserName);
         if (currentUser == null)
             throw new EntityNotFoundException("Пользователь не найден");
 
@@ -174,15 +178,9 @@ public sealed class UserService : IUserService
 
     private async Task<UserView> GetByUserName(string userName)
     {
-        var user = await GetUser(userName) ?? throw new EntityNotFoundException($"Пользователь {userName} не обнаружен!");
+        var user = await GetByName(userName) ?? throw new EntityNotFoundException($"Пользователь {userName} не обнаружен!");
         return user.Adapt<UserView>();
     }
-
-    private Task<User?> GetUser(string? userName)
-        => dbContext.Users
-                    .Include(x => x.UserRoles)
-                        .ThenInclude(x => x.Role)
-                    .FirstOrDefaultAsync(x => x.UserName == userName);
 
     private void CheckPossibilityToLoginAtUser(User user)
     {
@@ -192,6 +190,8 @@ public sealed class UserService : IUserService
 
     private async Task<TokensView> GenerateTokens(User user)
     {
+        if (user == null)
+            throw new BusinessErrorException("Пользователь не передан");
         var userRoles = await userManager.GetRolesAsync(user);
         var expiresIn = DateTime.UtcNow.AddSeconds(authOptions.AccessTokenLifetime);
         var refreshExpiresIn = DateTime.UtcNow.AddSeconds(authOptions.RefreshTokenLifetime);

@@ -4,17 +4,14 @@ using Microsoft.Extensions.Options;
 
 namespace Common.BackgroundTasks;
 
-public abstract class BaseTimeBackgroundTask<TService, TOptions> : BaseBackgroundTask<TService>
-    where TService : notnull
-    where TOptions : notnull, BaseTimeBackgroundTaskOptions
+public abstract class BaseTimeBackgroundTask<TService, TOptions>(IServiceProvider serviceProvider, IOptionsMonitor<TOptions> options, ILogger logger) 
+    : BaseBackgroundTask<TService>(serviceProvider, logger)
+        where TService : notnull
+        where TOptions : notnull, BaseTimeBackgroundTaskOptions
 {
-    public IOptionsMonitor<TOptions> Options { get; set; }
+    public IOptionsMonitor<TOptions> Options { get; set; } = options;
 
     public override bool IsEnabled => Options.CurrentValue.IsEnable;
-
-    protected BaseTimeBackgroundTask(IServiceProvider serviceProvider, ILogger logger) : base(serviceProvider, logger)
-    {
-    }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

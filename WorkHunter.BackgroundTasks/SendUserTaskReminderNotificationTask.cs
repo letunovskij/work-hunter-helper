@@ -6,12 +6,12 @@ using WorkHunter.Models.Config;
 
 namespace WorkHunter.BackgroundTasks
 {
-    public class SendUserTaskReminderNotificationTask : BaseCronTask<ITaskService, SendUserTaskReminderNotificationOptions>
+    public sealed class SendUserTaskReminderNotificationTask : BaseTimeBackgroundTask<ITaskService, SendUserTaskReminderNotificationOptions>
     {
         public override Func<ITaskService, Task> Action => (service) => service.SendReminderNotifications();
 
         public SendUserTaskReminderNotificationTask(IOptionsMonitor<SendUserTaskReminderNotificationOptions> options,
             IServiceProvider services,
-            ILogger<SendUserTaskReminderNotificationTask> logger) : base(options, services, logger) { }
+            ILogger<SendUserTaskReminderNotificationTask> logger) : base(services, options, logger) { }
     }
 }
