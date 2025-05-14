@@ -87,6 +87,7 @@ public sealed class TaskService : ITaskService
                                                 .Include(x => x.Responsible)
                                                 .Include(x => x.WResponse)
                                                 .Include(x => x.Type)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .FirstOrDefaultAsync(x => x.Id == id) ?? throw new EntityNotFoundException($"Задача {id} не найдена!");
 
@@ -114,6 +115,7 @@ public sealed class TaskService : ITaskService
                                                 .Include(x => x.Responsible)
                                                 .Include(x => x.WResponse)
                                                 .Include(x => x.Type)
+                                                .AsSplitQuery()
                                                 .AsNoTracking()
                                                 .Where(x => x.Status == UserTaskStatus.Open)
                                                 .ToListAsync();
