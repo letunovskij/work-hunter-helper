@@ -10,8 +10,9 @@ using WorkHunter.Services.Utils;
 
 namespace WorkHunter.Services.Settings;
 
-public abstract class BaseSettingService<TForeignKey, TEntity> : IBaseSettingService<TForeignKey>
+public abstract class BaseSettingService<TForeignKey, TEntity, TDtoEntity> : IBaseSettingService<TForeignKey>
     where TEntity : BaseSetting
+    where TDtoEntity : BaseSetting
 {
     protected readonly IWorkHunterDbContext workHunterDbContext;
 
@@ -21,7 +22,7 @@ public abstract class BaseSettingService<TForeignKey, TEntity> : IBaseSettingSer
 
     protected abstract Func<TForeignKey, string, Expression<Func<TEntity, bool>>> Get { get; }
     
-    protected BaseSettingService(IWorkHunterDbContext dbContext)
+    public BaseSettingService(IWorkHunterDbContext dbContext)
     {
         this.workHunterDbContext = dbContext;
     }
@@ -48,9 +49,9 @@ public abstract class BaseSettingService<TForeignKey, TEntity> : IBaseSettingSer
             ?? throw new BusinessErrorException($"Не удалось привести настройку name={settingName} для сущности id={id} к типу {typeof(T).Name}!");
     }
 
-    protected virtual async Task UpdateSettings(IReadOnlyDictionary<string, JsonDocument> settings, ICollection<TEntity> dbSettings)
+    protected virtual async Task UpdateSettings(ICollection<TDtoEntity> dtoSettings, ICollection<TEntity> dbSettings)
     {
-        CollectionUtils.UpdateDestinationFromSource(dbSettings, settings, dst => dst.Name, src => src.Key, StringComparer.Ordinal, removeFromSourceNotFounded: false);
+        CollectionUtils.UpdateDestinationFromSource(dbSettings, dtoSettings, dst => dst.Name, src => src.Name, StringComparer.Ordinal, removeFromSourceNotFounded: false);
 
         await workHunterDbContext.SaveChangesAsync();
     }

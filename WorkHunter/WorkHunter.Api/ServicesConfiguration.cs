@@ -11,6 +11,7 @@ using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
 using WorkHunter.Abstractions.Interviews;
 using WorkHunter.Abstractions.Notifications;
+using WorkHunter.Abstractions.Settings;
 using WorkHunter.Abstractions.WorkHunters;
 using WorkHunter.Api.Middleware;
 using WorkHunter.BackgroundTasks;
@@ -23,6 +24,7 @@ using WorkHunter.Services.Imports;
 using WorkHunter.Services.Interviews;
 using WorkHunter.Services.MediatrNotificationsHandlers.Wresponses;
 using WorkHunter.Services.Notifications;
+using WorkHunter.Services.Settings;
 using WorkHunter.Services.WorkHunters;
 
 namespace WorkHunter.Api;
@@ -51,8 +53,8 @@ public static class ServicesConfiguration
                 .Bind(config.GetSection("BackgroundTasksOptions:SendUserTaskReminderNotificationOptions"))
                 .ValidateDataAnnotations();
 
-        services.AddHttpContextAccessor();
-                //.AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User);
+        services.AddHttpContextAccessor()
+                .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User);
 
         services.AddHostedService<SendUserTaskReminderNotificationTask>();
 
@@ -66,6 +68,7 @@ public static class ServicesConfiguration
         services.AddScoped<ITaskService, TaskService>();
         services.AddScoped<INotificationsService, NotificationsService>();
         services.AddScoped<IEnumService, EnumService>();
+        services.AddScoped<IUserSettingsService, UserSettingsService>();
 
         services.AddMediatR(cfg =>
         {

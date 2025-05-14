@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using WorkHunter.Models.Entities.Interviews;
 using WorkHunter.Models.Entities.Notifications;
+using WorkHunter.Models.Entities.Settings;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
 using WorkHunter.Models.Enums;
@@ -41,6 +42,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
 
     public DbSet<UserTask> UserTasks { get; set; }
 
+    public DbSet<UserTask> UserSettings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -69,6 +72,26 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
                   .WithMany(x => x.UserRoles)
                   .HasForeignKey(x => x.UserId)
                   .IsRequired();
+        });
+
+        builder.Entity<UserSetting>(entity =>
+        {
+            entity.ToTable("UserSettings");
+            entity.Property(x => x.Name)
+                  .IsRequired()
+                  .HasMaxLength(250);
+
+            entity.Property(x => x.Value)
+                  .HasColumnType("jsonb");
+
+            entity.HasOne(x => x.User)
+                  .WithMany(x => x.Settings)
+                  .HasForeignKey(x => x.UserId)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.UserId, x.Name })
+                  .IsUnique();
         });
 
         builder.Entity<WResponse>(entity =>
@@ -115,6 +138,7 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
 
         builder.Entity<UserTask>(entity =>
         {
+            entity.ToTable("UserTasks");
             entity.Property(x => x.Text).IsRequired();
             entity.Property(x => x.Completed).IsRequired(false);
             entity.Property(x => x.CompletionReason).HasMaxLength(500);

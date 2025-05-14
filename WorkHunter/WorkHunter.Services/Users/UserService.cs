@@ -12,8 +12,11 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
+using System.Text.Json;
+using WorkHunter.Abstractions.Settings;
 using WorkHunter.Data;
 using WorkHunter.Models.Config;
+using WorkHunter.Models.Constants.Settings;
 using WorkHunter.Models.Dto.Users;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Views.Users;
@@ -21,6 +24,7 @@ using WorkHunter.Models.Views.Users;
 public sealed class UserService : IUserService
 {
     private readonly UserManager<User> userManager;
+    private readonly IUserSettingsService userSettingsService;
     //private readonly IPrincipal? currentUserPrincipal;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly AuthOptions authOptions;
@@ -35,6 +39,7 @@ public sealed class UserService : IUserService
     public UserService(
         UserManager<User> userManager,
         IHttpContextAccessor httpContextAccessor,
+        IUserSettingsService userSettingsService,
         //IPrincipal? currentUserPrincipal,
         IOptionsSnapshot<AuthOptions> authOptions,
         IWorkHunterDbContext dbContext,
@@ -48,6 +53,7 @@ public sealed class UserService : IUserService
         this.authOptions = authOptions.Value;
         this.dbContext = dbContext;
         this.loginValidator = loginValidator;
+        this.userSettingsService = userSettingsService;
     }
 
     public async Task<IReadOnlyList<UserBaseView>> GetAll()
@@ -125,8 +131,13 @@ public sealed class UserService : IUserService
         };
 
         await CreateUser(user, GenerateRandomPassword(), dto.Roles);
-
         await dbContext.SaveChangesAsync();
+
+        await userSettingsService.UpdateSettings(user.Id,
+            new Dictionary<string, JsonDocument>() {
+                { UserSettingConstant.SendTaskReminders, JsonSerializer.SerializeToDocument(true) },
+                { UserSettingConstant.SendNotifications, JsonSerializer.SerializeToDocument(true) },
+            });
 
         return await this.GetById(user.Id);
     }
@@ -161,6 +172,7 @@ public sealed class UserService : IUserService
 
     private async Task CreateUser(User user, string password, IReadOnlyList<string> roles)
     {
+        user.Id = Guid.NewGuid().ToString();
         var userResult = await userManager.CreateAsync(user, password);
         if (!userResult.Succeeded)
             throw new BusinessErrorException(string.Join(" ,", userResult.Errors.Select(x => x.Description)));

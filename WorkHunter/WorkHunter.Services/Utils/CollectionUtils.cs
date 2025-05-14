@@ -27,29 +27,37 @@ public static class CollectionUtils
     {
         var toRemove = new List<TDestination>();
 
-        foreach (var dstItem in dst)
-        {
-            var srcItem = src.FirstOrDefault(x => comparer.Equals(keySource(x), keyDestination(dstItem)));
+        if (dst.Any())
+            foreach (var dstItem in dst)
+            {
+                var srcItem = src.FirstOrDefault(x => comparer.Equals(keySource(x), keyDestination(dstItem)));
 
-            if (srcItem != null)
-                src.Adapt(dstItem);
-            else
-                toRemove.Add(dstItem);          
-        }
+                if (srcItem != null)
+                    src.Adapt(dstItem);
+                else
+                    toRemove.Add(dstItem);          
+            }
 
         if (removeFromSourceNotFounded ?? false)
             foreach (var dstItem in toRemove)
                 dst.Remove(dstItem);
 
-        var dstKeysList = dst.Select(keyDestination).ToList();
-        foreach (var srcItem in src)
-        {
-            if (!dstKeysList.Contains(keySource(srcItem)))
+        if (dst.Any()) 
+        { 
+            var dstKeysList = dst.Select(keyDestination).ToList();
+            foreach (var srcItem in src)
             {
-                var dstItem = srcItem.Adapt<TDestination>();
-                dst.Add(dstItem);
-                dstKeysList.Add(keySource(srcItem));
+                if (!dstKeysList.Contains(keySource(srcItem)))
+                {
+                    var dstItem = srcItem.Adapt<TDestination>();
+                    dst.Add(dstItem);
+                    dstKeysList.Add(keySource(srcItem));
+                }
             }
+        } else
+        {
+            foreach (var srcItem in src)
+                dst.Add(srcItem.Adapt<TDestination>());
         }
     }
 
