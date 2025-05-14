@@ -16,12 +16,14 @@ public sealed class TaskService : ITaskService
 {
     private readonly IUserService userService;
     private readonly IWorkHunterDbContext workHunterDbContext;
+    private readonly INotificationsService notificationsService;
     //userTaskTypeService
 
-    public TaskService(IUserService userService, IWorkHunterDbContext workHunterDbContext)
+    public TaskService(IUserService userService, IWorkHunterDbContext workHunterDbContext, INotificationsService notificationsService)
     {
         this.userService = userService;
         this.workHunterDbContext = workHunterDbContext;
+        this.notificationsService = notificationsService;
     }
 
     public Task CompletedBatchByHand(IEnumerable<int> ids, string reason)
@@ -65,7 +67,7 @@ public sealed class TaskService : ITaskService
         return true;
     }
 
-    private string? GetTaskTemplate(UserTaskType userTaskType, UserTask task, UserView responsible, UserTaskDto? dto)
+    private string? GetTaskTemplate(UserTaskType userTaskType, UserTask task, UserView responsible, UserTaskDto? dto = null)
     {
         string? initialNotificationText = string.Empty;
         switch (userTaskType.Type)
@@ -106,8 +108,24 @@ public sealed class TaskService : ITaskService
         throw new NotImplementedException();
     }
 
-    public Task SendReminderNotifications()
+    public async Task SendReminderNotifications()
     {
-        throw new NotImplementedException();
+        var userTasks = await workHunterDbContext.UserTasks
+                                                .Include(x => x.Responsible)
+                                                .Include(x => x.WResponse)
+                                                .Include(x => x.Type)
+                                                .AsNoTracking()
+                                                .Where(x => x.Status == UserTaskStatus.Open)
+                                                .ToListAsync();
+
+        // TODO check is reminder notifications on tasks for each user is active
+
+        foreach (var userTask in userTasks)
+        {
+            // TODO: for active reminders get last log on notification date for user and task: var lastLog = await notificationService.GetLastLog( task, email, DateTime.UtcNow)
+            var reminderNotification = GetTaskTemplate(userTask.Type, userTask, userTask.Responsible.Adapt<UserView>());
+            var isSent = await notificationsService.SendTaskReminder(userTask, userTask.Responsible, reminderNotification);
+            // TODO if (isSent) notificationsService.AddLog(notification.Id, emails);
+        }
     }
 }
