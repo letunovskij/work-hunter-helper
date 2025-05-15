@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkHunter.Models.Entities.Interviews;
 using WorkHunter.Models.Entities.Notifications;
+using WorkHunter.Models.Entities.Settings;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Entities.WorkHunters;
 
@@ -18,7 +19,9 @@ public interface IWorkHunterDbContext
 
     DbSet<UserTask> UserTasks { get; set; }
 
-    DbSet<UserTask> UserSettings { get; set; }
+    DbSet<UserSetting> UserSettings { get; set; }
+
+    DbSet<SystemSetting> SystemSettings { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

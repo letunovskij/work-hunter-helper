@@ -2,4 +2,5 @@
 
 public sealed class SystemSetting : BaseSetting
 {
+    public int Id { get; set; }
 }

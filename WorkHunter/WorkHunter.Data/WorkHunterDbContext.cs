@@ -42,7 +42,9 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
 
     public DbSet<UserTask> UserTasks { get; set; }
 
-    public DbSet<UserTask> UserSettings { get; set; }
+    public DbSet<UserSetting> UserSettings { get; set; }
+
+    public DbSet<SystemSetting> SystemSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -91,6 +93,20 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(x => new { x.UserId, x.Name })
+                  .IsUnique();
+        });
+
+        builder.Entity<SystemSetting>(entity =>
+        {
+            entity.ToTable("Settings");
+            entity.Property(x => x.Name)
+                  .IsRequired()
+                  .HasMaxLength(250);
+
+            entity.Property(x => x.Value)
+                  .HasColumnType("jsonb");
+
+            entity.HasIndex(x => x.Name )
                   .IsUnique();
         });
 

@@ -69,6 +69,7 @@ public static class ServicesConfiguration
         services.AddScoped<INotificationsService, NotificationsService>();
         services.AddScoped<IEnumService, EnumService>();
         services.AddScoped<IUserSettingsService, UserSettingsService>();
+        services.AddScoped<ISettingsService, SettingsService>();        
 
         services.AddMediatR(cfg =>
         {

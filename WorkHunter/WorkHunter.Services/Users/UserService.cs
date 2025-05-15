@@ -188,10 +188,10 @@ public sealed class UserService : IUserService
 
     #region private
 
-    private async Task<UserView> GetByUserName(string userName)
+    private async Task<UserBaseView> GetByUserName(string userName)
     {
         var user = await GetByName(userName) ?? throw new EntityNotFoundException($"Пользователь {userName} не обнаружен!");
-        return user.Adapt<UserView>();
+        return user.Adapt<UserBaseView>();
     }
 
     private void CheckPossibilityToLoginAtUser(User user)
