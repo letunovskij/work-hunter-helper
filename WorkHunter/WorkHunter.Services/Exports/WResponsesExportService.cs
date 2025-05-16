@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using Common.Abstractions.Exports;
+using Common.Exceptions;
 using Common.Extensions;
 using Common.Models;
 using Common.Utils;
@@ -44,8 +45,10 @@ namespace WorkHunter.Services.Exports
 
         private async Task FillPage(XLWorkbook workbook, WresponsePageType pageType)
         {
-            var worksheet = workbook.Worksheets.First(x => x.Name.Trim() == pageType.GetDescription());
-            var currentRowNumber = worksheet.LastRowUsed().RowNumber() + 1;
+            var worksheet = workbook.Worksheets.First(x => x.Name.Trim() == pageType.GetDescription()) 
+                ?? throw new BusinessErrorException($"Лист {pageType.GetDescription()} не найден!");
+
+            var currentRowNumber = worksheet.LastRowUsed()?.RowNumber() ?? 0 + 1;
 
             switch (pageType)
             {

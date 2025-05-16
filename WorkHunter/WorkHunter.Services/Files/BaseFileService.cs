@@ -28,10 +28,10 @@ namespace WorkHunter.Services.Files
         // protected readonly IFileDbContext Context;
         protected BaseFileService(
             IOptionsSnapshot<StorageOptions> storageOptions,
-            IWorkHunterDbContext Context)
+            IWorkHunterDbContext context)
         {
             this.StorageOptions = storageOptions.Value;
-            this.WorkHunterDbContext = Context;
+            this.WorkHunterDbContext = context;
         }
 
         // TODO video-api/#51: unify api via filters
@@ -42,15 +42,14 @@ namespace WorkHunter.Services.Files
 
         protected abstract Task CheckUserAccessToFileContainterEntity(Guid entityId);
 
-        protected Action<TFile> UpdateFile;
+        protected Action<TFile>? UpdateFile;
 
-        private string[] GetFilePathAsArray(Guid entityId)
-            => new string[]
-               {
-                  StorageOptions.BasePath,
-                  StorageOptions.VideoStorageFolder,
-                  entityId.ToString()
-               };
+        private string[] GetFilePathAsArray(Guid entityId) =>
+            [
+               StorageOptions.BasePath,
+               StorageOptions.VideoStorageFolder,
+               entityId.ToString()
+            ];
 
         public virtual async Task Delete(int fileId)
         {
@@ -99,10 +98,13 @@ namespace WorkHunter.Services.Files
         // TODO video-api/#51: move in new common class
         private async Task<IReadOnlyList<TFile>> UploadFiles(IEnumerable<UploadFileDto> files, string[] strings, bool doValidation = true)
         {
+            if (UpdateFile == null)
+                throw new BusinessErrorException($"Не определен метод обновления системных данных о файле {nameof(UpdateFile)}!");
+
             var directoryPath = Path.Combine(strings);
 
             if (doValidation)
-                ValidateFiles(files, StorageOptions, directoryPath);
+                BaseFileService<TFile>.ValidateFiles(files, StorageOptions, directoryPath);
 
             if (!Directory.Exists(directoryPath))
                 Directory.CreateDirectory(directoryPath);
@@ -142,7 +144,7 @@ namespace WorkHunter.Services.Files
             return created;
         }
 
-        private void ValidateFiles(IEnumerable<UploadFileDto> files, StorageOptions storageOptions, string filesDirectoryPath)
+        private static void ValidateFiles(IEnumerable<UploadFileDto> files, StorageOptions storageOptions, string filesDirectoryPath)
         {
             // TODO video-api/#51: check total files count per entity
             if (files.GroupBy(x => x.FileName).Any(x => x.Count() > 1))

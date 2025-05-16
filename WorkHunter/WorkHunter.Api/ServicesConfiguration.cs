@@ -1,11 +1,9 @@
 ﻿using Abstractions.Users;
-using Common.Exceptions;
 using Common.Models.Files;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 // using Microsoft.Extensions.Configuration; // Common TODO: extract Report project, extract Background Tasks project
 using System.Reflection;
-using System.Security.Principal;
 using WorkHunter.Abstractions.Enums;
 using WorkHunter.Abstractions.Exports;
 using WorkHunter.Abstractions.Imports;
@@ -25,6 +23,7 @@ using WorkHunter.Services.Interviews;
 using WorkHunter.Services.MediatrNotificationsHandlers.Wresponses;
 using WorkHunter.Services.Notifications;
 using WorkHunter.Services.Settings;
+using WorkHunter.Services.Users;
 using WorkHunter.Services.WorkHunters;
 
 namespace WorkHunter.Api;
@@ -53,8 +52,7 @@ public static class ServicesConfiguration
                 .Bind(config.GetSection("BackgroundTasksOptions:SendUserTaskReminderNotificationOptions"))
                 .ValidateDataAnnotations();
 
-        services.AddHttpContextAccessor()
-                .AddScoped<IPrincipal>(x => x.GetService<IHttpContextAccessor>()?.HttpContext?.User);
+        services.AddHttpContextAccessor();
 
         services.AddHostedService<SendUserTaskReminderNotificationTask>();
 

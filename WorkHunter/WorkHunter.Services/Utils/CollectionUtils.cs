@@ -27,7 +27,7 @@ public static class CollectionUtils
     {
         var toRemove = new List<TDestination>();
 
-        if (dst.Any())
+        if (dst.Count > 0)
             foreach (var dstItem in dst)
             {
                 var srcItem = src.FirstOrDefault(x => comparer.Equals(keySource(x), keyDestination(dstItem)));
@@ -42,7 +42,7 @@ public static class CollectionUtils
             foreach (var dstItem in toRemove)
                 dst.Remove(dstItem);
 
-        if (dst.Any()) 
+        if (dst.Count > 0) 
         { 
             var dstKeysList = dst.Select(keyDestination).ToList();
             foreach (var srcItem in src)

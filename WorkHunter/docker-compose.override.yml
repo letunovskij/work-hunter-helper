@@ -14,9 +14,10 @@ services:
 
   workhunter.api:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ConnectionStringWHunter: "Server=localhost;Port=5432;Database=whunter;User Id=whunter;Password=\"tva8g,-c_d19bn8*\"" 
     ports:
       - 55431:8080
       - 55432:8081

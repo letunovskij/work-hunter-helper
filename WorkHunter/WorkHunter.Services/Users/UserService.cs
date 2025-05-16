@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
 using WorkHunter.Abstractions.Settings;
@@ -21,11 +20,12 @@ using WorkHunter.Models.Dto.Users;
 using WorkHunter.Models.Entities.Users;
 using WorkHunter.Models.Views.Users;
 
+namespace WorkHunter.Services.Users;
+
 public sealed class UserService : IUserService
 {
     private readonly UserManager<User> userManager;
     private readonly IUserSettingsService userSettingsService;
-    //private readonly IPrincipal? currentUserPrincipal;
     private readonly IHttpContextAccessor httpContextAccessor;
     private readonly AuthOptions authOptions;
     private readonly IWorkHunterDbContext dbContext;
@@ -40,7 +40,6 @@ public sealed class UserService : IUserService
         UserManager<User> userManager,
         IHttpContextAccessor httpContextAccessor,
         IUserSettingsService userSettingsService,
-        //IPrincipal? currentUserPrincipal,
         IOptionsSnapshot<AuthOptions> authOptions,
         IWorkHunterDbContext dbContext,
         IValidator<LoginDto> loginValidator,
@@ -48,7 +47,6 @@ public sealed class UserService : IUserService
         )
     {
         this.userManager = userManager;
-        //this.currentUserPrincipal = currentUserPrincipal;
         this.httpContextAccessor = httpContextAccessor;
         this.authOptions = authOptions.Value;
         this.dbContext = dbContext;
@@ -70,7 +68,7 @@ public sealed class UserService : IUserService
         if (string.IsNullOrEmpty(httpContextAccessor?.HttpContext?.User?.Identity?.Name))
             throw new UnauthorizedAccessException("Текущий пользователь не авторизован!");
 
-        return await GetByUserName(httpContextAccessor.HttpContext.User.Identity.Name);
+        return await GetByUserName(httpContextAccessor.HttpContext.User.Identity.Name ?? throw new BusinessErrorException("У текущего пользователя нет имени!"));
     }
 
     public async Task<TokensView> Login(LoginDto dto)
@@ -100,7 +98,7 @@ public sealed class UserService : IUserService
 
     public async Task<HashSet<User>> GetInRoles(params string[] roles)
     {
-        HashSet<User> users = new();
+        HashSet<User> users = [];
         foreach (var role in roles) 
             users.UnionWith(await userManager.GetUsersInRoleAsync(role));
 
@@ -109,14 +107,11 @@ public sealed class UserService : IUserService
 
     public async Task<UserView> Edit(UserEditDto dto)
     {
-        var currentUser = await GetByName(dto.UserName);
-        if (currentUser == null)
-            throw new EntityNotFoundException("Пользователь не найден");
-
+        var currentUser = await GetByName(dto.UserName) ?? throw new EntityNotFoundException("Пользователь не найден");
         currentUser.Name = dto.Name;
         currentUser.Email = dto.Email;
 
-        var updatingResult = await userManager.UpdateAsync(currentUser);
+        await userManager.UpdateAsync(currentUser);
 
         return await GetById(currentUser.Id);
     }
@@ -146,7 +141,7 @@ public sealed class UserService : IUserService
     {
         options ??= userManager.Options.Password;
 
-        string[] charsSource = new[] { upper, lower, special, digit };
+        string[] charsSource = [upper, lower, special, digit];
         StringBuilder password = new(options.RequiredLength);
 
         if (options.RequireUppercase)
@@ -170,7 +165,7 @@ public sealed class UserService : IUserService
         return password.ToString();
     }
 
-    private async Task CreateUser(User user, string password, IReadOnlyList<string> roles)
+    private async Task CreateUser(User user, string password, IReadOnlyList<string>? roles)
     {
         user.Id = Guid.NewGuid().ToString();
         var userResult = await userManager.CreateAsync(user, password);
@@ -194,7 +189,7 @@ public sealed class UserService : IUserService
         return user.Adapt<UserBaseView>();
     }
 
-    private void CheckPossibilityToLoginAtUser(User user)
+    private static void CheckPossibilityToLoginAtUser(User user)
     {
         if (user.IsDeleted)
             throw new UnauthorizedAccessException("Пользователь удален!");
@@ -204,6 +199,9 @@ public sealed class UserService : IUserService
     {
         if (user == null)
             throw new BusinessErrorException("Пользователь не передан");
+        if (string.IsNullOrEmpty(user.UserName))
+            throw new BusinessErrorException("Пользователь не передан");
+
         var userRoles = await userManager.GetRolesAsync(user);
         var expiresIn = DateTime.UtcNow.AddSeconds(authOptions.AccessTokenLifetime);
         var refreshExpiresIn = DateTime.UtcNow.AddSeconds(authOptions.RefreshTokenLifetime);

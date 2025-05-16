@@ -26,7 +26,7 @@ public sealed class UserTask
 
     public string? CompletionReason { get; set; }
 
-    public string Text { get; set; }
+    public required string Text { get; set; }
 
     public DateTime LastNotificationDate { get; set; }
 

@@ -28,7 +28,7 @@ public sealed class UserTaskType
     /// <summary>
     /// Получатель письма
     /// </summary>
-    public string Recipient {  get; set; }
+    public required string Recipient {  get; set; }
 
     /// <summary>
     /// Частота напоминаний

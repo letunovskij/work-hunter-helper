@@ -2,6 +2,7 @@
 using Common.Exceptions;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using WorkHunter.Abstractions.Notifications;
 using WorkHunter.Data;
 using WorkHunter.Models.Dto.Notifications;
@@ -17,13 +18,19 @@ public sealed class TaskService : ITaskService
     private readonly IUserService userService;
     private readonly IWorkHunterDbContext workHunterDbContext;
     private readonly INotificationsService notificationsService;
+    private readonly ILogger<TaskService> logger;
     //userTaskTypeService
 
-    public TaskService(IUserService userService, IWorkHunterDbContext workHunterDbContext, INotificationsService notificationsService)
+    public TaskService(
+        IUserService userService, 
+        IWorkHunterDbContext workHunterDbContext, 
+        INotificationsService notificationsService,
+        ILogger<TaskService> logger)
     {
         this.userService = userService;
         this.workHunterDbContext = workHunterDbContext;
         this.notificationsService = notificationsService;
+        this.logger = logger;
     }
 
     public Task CompletedBatchByHand(IEnumerable<int> ids, string reason)
@@ -56,7 +63,8 @@ public sealed class TaskService : ITaskService
             ResponsibleId = responsible.Id,
             LastNotificationDate = currentTime,
             Created = currentTime,
-            WResponseId = wresponseId
+            WResponseId = wresponseId,
+            Text = ""
         };
 
         var reminderNotification = GetTaskTemplate(userTaskType, task, responsible, dto);
@@ -67,7 +75,7 @@ public sealed class TaskService : ITaskService
         return true;
     }
 
-    private string? GetTaskTemplate(UserTaskType userTaskType, UserTask task, UserView responsible, UserTaskDto? dto = null)
+    private static string? GetTaskTemplate(UserTaskType userTaskType, UserTask task, UserView responsible, UserTaskDto? dto = null)
     {
         string? initialNotificationText = string.Empty;
         switch (userTaskType.Type)
@@ -78,6 +86,7 @@ public sealed class TaskService : ITaskService
                 break;
             default: break;
         }
+
         return initialNotificationText;
     }
 
@@ -124,8 +133,21 @@ public sealed class TaskService : ITaskService
 
         foreach (var userTask in userTasks)
         {
+            if (userTask.Type == null)
+            {
+                logger.LogError("У задачи {UserTask} не определен тип", userTask);
+                continue;
+            }
+
             // TODO: for active reminders get last log on notification date for user and task: var lastLog = await notificationService.GetLastLog( task, email, DateTime.UtcNow)
             var reminderNotification = GetTaskTemplate(userTask.Type, userTask, userTask.Responsible.Adapt<UserView>());
+
+            if (string.IsNullOrEmpty(reminderNotification))
+            {
+                logger.LogError("У задачи {UserTask} типа {userTaskType} не определен текст нотификации", userTask, userTask.Type);
+                continue;
+            }
+
             var isSent = await notificationsService.SendTaskReminder(userTask, userTask.Responsible, reminderNotification);
             // TODO if (isSent) notificationsService.AddLog(notification.Id, emails);
         }

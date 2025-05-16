@@ -2,6 +2,7 @@
 using Common.Abstractions.Imports;
 using Common.Attributes;
 using Common.Constants.Imports;
+using Common.Enums;
 using Common.Models.Imports;
 using Common.Utils;
 using Microsoft.Extensions.Logging;
@@ -125,8 +126,9 @@ namespace Common.Abstractions.Imports
                                 // TODO числовые параметры вакансий зависят от типа поля
                                 switch (importedColumnAttribute.DigitType)
                                 {
-                                    //case DigitType.Positive:
-                                    //    if (DigitUtils.CheckIsPercent(cellValueAsDigital)) AddRangeException(cell);
+                                    case DigitType.Positive:
+                                        //if (DigitUtils.CheckIsPercent(cellValueAsDigital)) AddRangeException(cell);
+                                        break;
                                 }
                             }
                         }
@@ -204,10 +206,12 @@ namespace Common.Abstractions.Imports
             }
 
             var headersColumnsNames = headerColumns.Values.ToList();
-            var modelColumnsNames = modelProperties.Select(x => (x.GetCustomAttribute(typeof(ImportColumnAttribute)) as ImportColumnAttribute)?.Name);
+            var modelColumnsNames = modelProperties.Select(x => x.GetCustomAttribute<ImportColumnAttribute>()?.Name);
 
-            foreach (var modelColumnName in modelColumnsNames.Where(n => !string.IsNullOrEmpty(n))) 
+            foreach (var modelColumnName in modelColumnsNames) 
             {
+                if (string.IsNullOrEmpty(modelColumnName))
+                    continue;
                 if (!headersColumnsNames.Contains(modelColumnName))
                     this.ImportExceptions.Add(new()
                     {
@@ -231,7 +235,7 @@ namespace Common.Abstractions.Imports
 
         public virtual void UpdateImportingPageWithErrors(IXLWorksheet worksheet)
         {
-            if (!ImportExceptions.Any())
+            if (ImportExceptions.Count == 0)
                 return;
 
             worksheet.Cell(1, this.NumberColumnForErrors).SetValue("Ошибки");

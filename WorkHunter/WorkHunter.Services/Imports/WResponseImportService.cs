@@ -97,20 +97,20 @@ namespace WorkHunter.Services.Imports
 
                 var isErrorOnRow = this.ImportExceptions.Exists(x => x.RowNumber == rowNumber);
 
-                if (!isErrorOnRow && IsModelValid(importingModel) && user != null)
+                if (!isErrorOnRow && IsModelValid(importingModel) && user != null) 
                     dbContext.WResponses.Add(new()
                     {
-                        UserId = importingModel.UserId,
+                        UserId = importingModel.UserId!,
                         Email = importingModel.Email,
-                        VacancyUrl = importingModel.VacancyUrl
+                        VacancyUrl = importingModel.VacancyUrl!
                     });
             }
 
             return base.ImportExceptions.Count > 0;
         }
 
-        private bool IsModelValid(WResponseImportModel importingModel)
-            => importingModel != null 
+        private static bool IsModelValid(WResponseImportModel importingModel)
+            => importingModel != null
             && !string.IsNullOrEmpty(importingModel.UserId) 
             && !string.IsNullOrEmpty(importingModel.VacancyUrl);
 

@@ -12,7 +12,7 @@ namespace EmailSender.Services
     {
         private readonly TSmtpOptions emailOptions;
 
-        private readonly ILogger logger;
+        protected readonly ILogger logger;
 
         public BaseEmailSender(TSmtpOptions emailOptions, ILogger logger/*ILogger<BaseEmailSender<TSmtpOptions>> logger*/)
         {

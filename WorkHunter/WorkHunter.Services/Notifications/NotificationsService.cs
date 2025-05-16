@@ -25,6 +25,12 @@ public sealed class NotificationsService : BaseEmailSender<EmailOptions>, INotif
 
     public async Task<bool> SendTaskReminder(UserTask userTask, User? responsible, string reminderNotification)
     {
+        if (responsible == null || string.IsNullOrEmpty(responsible.Email))
+        {
+            this.logger.LogError("Не указан пользователь по задаче {UserTaskId}!", userTask.Id);
+            return false;
+        }
+
         var emailBody = reminderNotification;
         var isSent = await base.Send(responsible.Email, $"Напоминание о действиях {userTask.Id} по отклику: ", emailBody);
 

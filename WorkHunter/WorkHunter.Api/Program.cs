@@ -26,7 +26,7 @@ builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
-    config.AddSecurity("Bearer", Enumerable.Empty<string>(),
+    config.AddSecurity("Bearer", [],
         new OpenApiSecurityScheme
         {
             Type = OpenApiSecuritySchemeType.Http,
@@ -68,14 +68,13 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config =>
 {
-    //config.UseSqlite("Filename=WorkHunterDb.sqlite");
+    //config.UseSqlite("Filename=WorkHunterDb.sqlite");``
     config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
     //config.EnableSensitiveDataLogging();
 });
 
-var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>();
-if (authOptions == null)
-    throw new BusinessErrorException("Auth Options is not configured!");
+var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>() 
+    ?? throw new BusinessErrorException("Auth Options is not configured!");
 
 builder.Services.AddAuthentication(opts =>
 {
@@ -97,16 +96,9 @@ builder.Services.AddAuthentication(opts =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(
-        AppPolicies.Admin,
-        policy => policy.RequireRole(AppRoles.Admin));
-
-    options.AddPolicy(
-        AppPolicies.All,
-        policy => policy.RequireRole(AppRoles.Admin, AppRoles.User));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(AppPolicies.Admin, policy => policy.RequireRole(AppRoles.Admin))
+    .AddPolicy(AppPolicies.All, policy => policy.RequireRole(AppRoles.Admin, AppRoles.User));
 
 TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 builder.Services.RegisterApplicationServices(builder.Configuration);

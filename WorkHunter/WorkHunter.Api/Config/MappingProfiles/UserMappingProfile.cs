@@ -12,6 +12,6 @@ public sealed class UserMappingProfile : IRegister
 
         config.NewConfig<User, UserView>()
               .Inherits<User, UserBaseView>()
-              .Map(x => x.Roles, src => src.UserRoles.Select(u => u.Role.Name).ToList());
+              .Map(x => x.Roles, src => src.UserRoles == null ? null : src.UserRoles.Select(u => u.Role!.Name));
     }
 }
