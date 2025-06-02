@@ -1,0 +1,19 @@
+﻿services:
+  workhunter.api:
+    build: .\WorkHunter\WorkHunter.Api\
+      #context: .\..\..\
+      #dockerfile: .\WorkHunter\WorkHunter.Api\Dockerfile
+    container_name: 'workhunter.api'
+    restart: always
+    ports:
+      - "8080:8080"
+      - "8081:8081"   
+      - "53895:8082"
+      - "53894:8083"
+    environment:
+      - "ConnectionStrings:WorkHunter=Server=localhost;Port=5432;Database=whunter;User Id=whunter;Password=\"tva8g,-c_d19bn8*\"" 
+ 
+# networks:
+  # default:
+    # name: myLocalNetwork # создана извне: docker network create --driver=bridge myLocalNetwork
+    # external: true

@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: whunter
+      POSTGRES_USER: whunter
+      POSTGRES_PASSWORD: tva8g,-c_d19bn8*
+    volumes:
+      - pg-data1:/var/lib/postgresql/data1
+    ports:
+      - "5432:5432"
+
+  workhunter.api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_HTTPS_PORTS: 8081
+      ConnectionStringWHunter: "Server=localhost;Port=5432;Database=whunter;User Id=whunter;Password=\"tva8g,-c_d19bn8*\"" 
+    ports:
+      - 55431:8080
+      - 55432:8081
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets:ro
+      - ${APPDATA}/ASP.NET/Https:C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https:ro
+    networks:
+      - mynetwork
+
+volumes:
+    pg-data1:
+
+networks:
+  mynetwork:
+     driver: nat
+     driver_opts:
+       com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+       # com.docker.network: "default"

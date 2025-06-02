@@ -339,4 +339,7 @@ ASALocalRun/
 .localhistory/
 
 .vscode/
-/WorkHunter/WorkHunterApi/logs
+/WorkHunter/WorkHunter.Api/logs
+/WorkHunterUtils/CurrencyHistory/CurrencyHistory.WebHost/Logs
+/AuthApp/Demo.Authentication/ClientApp/.angular/cache/15.2.11/babel-webpack
+/AuthApp/Demo.Authentication/ClientApp/.angular/cache/15.2.11/angular-webpack

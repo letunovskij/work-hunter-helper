@@ -1,4 +1,5 @@
 ﻿using Abstractions.Users;
+using MediatR;
 using Moq;
 using WorkHunter.Data;
 using WorkHunter.Models.Dto.WorkHunters;
@@ -16,9 +17,10 @@ public sealed class SetStatusForWResponseTest
     {
         Mock<IWorkHunterDbContext> mockWorkHunterDbContext = new();
         Mock<IUserService> mockUserService = new();
-        var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
+        Mock<IMediator> mockMediatorService = new();
+        var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object, mockMediatorService.Object);
 
-        var wResponse = new WResponse() { Id = new Guid(), IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
+        var wResponse = new WResponse() { IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
         WResponseService.SetStatusForWResponse(wResponse, new WResponseUpdateDto() { AnswerText = "", IsAnswered= true });
 
         Assert.IsFalse(wResponse.IsAnswered);
@@ -30,9 +32,10 @@ public sealed class SetStatusForWResponseTest
     {
         Mock<IWorkHunterDbContext> mockWorkHunterDbContext = new();
         Mock<IUserService> mockUserService = new();
-        var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object);
+        Mock<IMediator> mockMediatorService = new();
+        var mockWresponseService = new WResponseService(mockWorkHunterDbContext.Object, mockUserService.Object, mockMediatorService.Object);
 
-        var wResponse = new WResponse() { Id = new Guid(), IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
+        var wResponse = new WResponse() { IsAnswered = false, UserId = "1", VacancyUrl = "test@test.ru" };
         WResponseService.SetStatusForWResponse(wResponse, new WResponseUpdateDto() { AnswerText = "Response from employee", IsAnswered = false });
 
         Assert.IsFalse(wResponse.IsAnswered);

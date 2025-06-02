@@ -1,0 +1,6 @@
+services:
+  workhunter.api:
+    image: ${DOCKER_REGISTRY-}workhunterapi
+    build:
+      context: ..
+      dockerfile: WorkHunter\WorkHunter.Api\Dockerfile

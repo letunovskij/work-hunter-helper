@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.Api", "WorkHunte
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailSender", "..\EmailSender\EmailSender.csproj", "{9DC885D6-0E2E-48A5-887D-7B71CF91DA2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkHunter.BackgroundTasks", "..\WorkHunter.BackgroundTasks\WorkHunter.BackgroundTasks.csproj", "{6EF016C4-0B19-4193-9142-E2EE55E6B80D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9980D53B-01DB-4479-902A-BDB7B5AA8B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DC885D6-0E2E-48A5-887D-7B71CF91DA2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DC885D6-0E2E-48A5-887D-7B71CF91DA2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DC885D6-0E2E-48A5-887D-7B71CF91DA2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DC885D6-0E2E-48A5-887D-7B71CF91DA2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EF016C4-0B19-4193-9142-E2EE55E6B80D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EF016C4-0B19-4193-9142-E2EE55E6B80D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EF016C4-0B19-4193-9142-E2EE55E6B80D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EF016C4-0B19-4193-9142-E2EE55E6B80D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

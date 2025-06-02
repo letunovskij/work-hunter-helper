@@ -1,7 +1,9 @@
+using Common.Exceptions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
@@ -16,7 +18,7 @@ using WorkHunter.Models.Config;
 using WorkHunter.Models.Constants;
 using WorkHunter.Models.Entities.Users;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder();
 
 builder.Services.AddAuthorization();
 builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration)
@@ -25,7 +27,7 @@ builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
-    config.AddSecurity("Bearer", Enumerable.Empty<string>(),
+    config.AddSecurity("Bearer", [],
         new OpenApiSecurityScheme
         {
             Type = OpenApiSecuritySchemeType.Http,
@@ -41,17 +43,21 @@ builder.Services.AddOpenApiDocument(config =>
     config.Version = "v1";
 });
 
+var MyAllowSpecificOrigins = "_MyAllowSubdomainPolicy";
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(corsPolicyBuilder =>
-    {
-        corsPolicyBuilder
-            .WithOrigins(builder.Configuration.GetValue<string>("Cors").Split(','))
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
-            .WithExposedHeaders("Content-Disposition");
-    });
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            var origins = builder.Configuration.GetValue<string>("Cors")?.Split(',');
+            if (origins != null && origins.Length > 0)
+            {
+                policy.WithOrigins(origins)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowAnyOrigin();
+            }
+        });
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -61,14 +67,21 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<WorkHunterDbContext>()
     .AddDefaultTokenProviders();
 
+var dbConnection = Environment.GetEnvironmentVariable("ConnectionStringWHunter");
+
 builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config =>
 {
-    //config.UseSqlite("Filename=WorkHunterDb.sqlite");
-    config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
+    //config.UseSqlite("Filename=WorkHunterDb.sqlite");``
+    if (!string.IsNullOrEmpty(dbConnection))
+        config.UseNpgsql(builder.Configuration.GetConnectionString(dbConnection));
+    else
+        config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
     //config.EnableSensitiveDataLogging();
 });
 
-var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>();
+var authOptions = builder.Configuration.GetSection("AuthOptions").Get<AuthOptions>() 
+    ?? throw new BusinessErrorException("Auth Options is not configured!");
+
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -89,16 +102,9 @@ builder.Services.AddAuthentication(opts =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(
-        AppPolicies.Admin,
-        policy => policy.RequireRole(AppRoles.Admin));
-
-    options.AddPolicy(
-        AppPolicies.All,
-        policy => policy.RequireRole(AppRoles.Admin, AppRoles.User));
-});
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(AppPolicies.Admin, policy => policy.RequireRole(AppRoles.Admin))
+    .AddPolicy(AppPolicies.All, policy => policy.RequireRole(AppRoles.Admin, AppRoles.User));
 
 TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 builder.Services.RegisterApplicationServices(builder.Configuration);
@@ -108,21 +114,33 @@ builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Client")),
+    RequestPath = "/Client"
+});
+
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapUserEndpoints();
+app.MapUsersEndpoints();
 app.MapWResponsesEndpoints();
+app.MapImportEndpoints();
+app.MapVideoInterviewEndpoints();
+app.MapTasksEndpoints();
+app.MapEnumEndpoints();
+app.MapAdminsEndpoints();
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {
     var scope = app.Services.CreateScope();
-    //await Initialize.SeedData(
-    //    scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
-    //    scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
-    //    scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
+    await Initialize.SeedData(
+        scope.ServiceProvider.GetRequiredService<UserManager<User>>(),
+        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>(),
+        scope.ServiceProvider.GetRequiredService<IWorkHunterDbContext>());
     scope.Dispose();
 }
 

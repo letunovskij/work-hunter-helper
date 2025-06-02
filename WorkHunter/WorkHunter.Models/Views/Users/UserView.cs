@@ -2,5 +2,5 @@
 
 public sealed class UserView : UserBaseView
 {
-    public List<string> Roles { get; set; }
+    public List<string>? Roles { get; set; }
 }

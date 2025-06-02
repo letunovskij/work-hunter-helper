@@ -7,21 +7,31 @@ namespace WorkHunter.Api.Endpoints;
 
 internal static class UserEndpoints
 {
-    internal static void MapUserEndpoints(this IEndpointRouteBuilder routes)
+    internal static void MapUsersEndpoints(this IEndpointRouteBuilder routes)
     {
-        var routeGroup = routes.MapGroup("user")
+        var routeGroup = routes.MapGroup("users")
                                .WithTags("User")
                                .WithOpenApi();
 
         routeGroup.MapGet("current", async (IUserService service) => await service.GetCurrent())
             .RequireAuthorization(AppPolicies.All)
-            .WithDescription("Получить текущего пользователя");
+            .WithDescription("Получить текущего пользователя")
+            .RequireCors(options => options.AllowAnyOrigin());
 
         routeGroup.MapGet(string.Empty, async (IUserService service) => await service.GetAll())
             //.RequireAuthorization(AppPolicies.Admin)
-            .WithDescription("Получить список всех пользователей");
+            .WithDescription("Получить список всех пользователей")
+            .RequireCors(options => options.AllowAnyOrigin()); 
 
         routeGroup.MapPost("token", async ([FromBody] LoginDto dto, IUserService service) => await service.Login(dto))
-            .WithDescription("Получить токен доступа");
+            .WithDescription("Получить токен доступа")
+            .DisableAntiforgery();
+
+        routeGroup.MapPost("create", async ([FromBody] UserCreateDto dto, IUserService service) => await service.Create(dto))
+            .WithDescription("Создать нового пользователя");
+
+        routeGroup.MapPost("edit", async ([FromBody] UserEditDto dto, IUserService service) => await service.Edit(dto))
+            .RequireAuthorization(AppPolicies.All)
+            .WithDescription("Редактировать текущего пользователя");
     }
 }

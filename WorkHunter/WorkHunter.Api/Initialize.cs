@@ -39,7 +39,7 @@ internal static class Initialize
 
     private static async Task SeedUser(UserManager<User> manager, User user, string? password, IWorkHunterDbContext dbContext, params string[] roles)
     {
-        var existedUser = await manager.FindByNameAsync(user.UserName);
+        var existedUser = await manager.FindByNameAsync(user.UserName!);
 
         if (existedUser == null)
         {
@@ -51,7 +51,7 @@ internal static class Initialize
 
             if (result.Succeeded)
             {
-                existedUser = await manager.FindByNameAsync(user.UserName);
+                existedUser = await manager.FindByNameAsync(user.UserName!);
                 await manager.AddToRolesAsync(existedUser!, roles);
             }
         }
