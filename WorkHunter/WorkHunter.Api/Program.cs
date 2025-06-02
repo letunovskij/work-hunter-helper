@@ -3,6 +3,7 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
@@ -66,10 +67,15 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
     .AddEntityFrameworkStores<WorkHunterDbContext>()
     .AddDefaultTokenProviders();
 
+var dbConnection = Environment.GetEnvironmentVariable("ConnectionStringWHunter");
+
 builder.Services.AddDbContext<IWorkHunterDbContext, WorkHunterDbContext>(config =>
 {
     //config.UseSqlite("Filename=WorkHunterDb.sqlite");``
-    config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
+    if (!string.IsNullOrEmpty(dbConnection))
+        config.UseNpgsql(builder.Configuration.GetConnectionString(dbConnection));
+    else
+        config.UseNpgsql(builder.Configuration.GetConnectionString("WorkHunter"));
     //config.EnableSensitiveDataLogging();
 });
 
@@ -107,6 +113,13 @@ builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 var app = builder.Build();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Client")),
+    RequestPath = "/Client"
+});
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);

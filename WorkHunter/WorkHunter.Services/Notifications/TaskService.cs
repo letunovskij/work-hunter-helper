@@ -89,8 +89,13 @@ public sealed class TaskService : ITaskService
 
         return initialNotificationText;
     }
+    public UserTaskView Get(int id)
+    {
+        Task<UserTaskView> result = GetAsync(id);
+        return result.Result;
+    }
 
-    public async Task<UserTaskView> Get(int id)
+    public async Task<UserTaskView> GetAsync(int id)
     {
         var userTask = await workHunterDbContext.UserTasks
                                                 .Include(x => x.Responsible)

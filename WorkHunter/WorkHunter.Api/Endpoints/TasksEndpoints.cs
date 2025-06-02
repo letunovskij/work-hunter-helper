@@ -14,7 +14,7 @@ internal static class TasksEndpoints
                                .WithTags("UserTasks")
                                .WithOpenApi();
 
-        routeGroup.MapGet("{id}", async (int id, ITaskService service) => await service.Get(id))
+        routeGroup.MapGet("{id}", (int id, ITaskService service) => service.Get(id))
             .RequireAuthorization(AppPolicies.All)
             .WithDescription("Получить задачу текущего пользователя по id");
         //.RequireCors(options => options.AllowAnyOrigin());

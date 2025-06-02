@@ -8,7 +8,9 @@ public interface ITaskService
 {
     Task<IReadOnlyList<UserTaskView>> GetAll(TaskStatus status, TaskType? type = null, DateTime? created = null);
 
-    Task<UserTaskView> Get(int id);
+    UserTaskView Get(int id);
+
+    Task<UserTaskView> GetAsync(int id);
 
     Task<IReadOnlyList<UserTaskView>> GetForCurrentUser(TaskStatus status, DateTime? created = null);
 
