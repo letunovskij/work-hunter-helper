@@ -1,0 +1,74 @@
+﻿@page "/Responses"
+
+@using Blazored.LocalStorage
+@using Common.Extensions
+@using WorkHunter.Models.Views.WorkHunters
+@using WorkHunterHelper.Services
+
+<PageTitle>Отклики</PageTitle>
+
+<h3>Отклики пользователя</h3>
+
+<h4>@exceptionText</h4>
+
+@if (wresponses != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th aria-label="Response Status">Status</th>
+                <th aria-label="Created Date">Date</th>
+                <th>Answered?</th>
+                <th>Employee Contact</th>
+                <th>Employee Answer</th>
+                <th>Employee Email</th>
+                <th>Vacancy Url</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var wresponse in wresponses)
+            {
+                <tr>
+                    <td>@wresponse.Id</td>
+                    <td>@wresponse.Status.GetDescription()</td>
+                    <td>@wresponse.CreatedAt</td>
+                    <td>@wresponse.IsAnswered</td>
+                    <td>@wresponse.Contact</td>
+                    <td>@wresponse.AnswerText</td>
+                    <td>@wresponse.Email</td>
+                    <td>@wresponse.VacancyUrl</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+@inject ILocalStorageService LocalStorage
+    @inject IWorkHunterService WorkHunterService
+
+    private List<WResponseView> wresponses;
+    private string exceptionText;
+    private string accessToken;
+
+    protected override async Task OnInitializedAsync()
+    {
+        exceptionText = string.Empty;
+        accessToken = string.Empty;
+
+        try {
+            var accessToken = await LocalStorage.GetItemAsStringAsync("blzr-whhfe-usr-accs");
+
+            if (string.IsNullOrEmpty(accessToken))
+                exceptionText = "Вы не авторизованы!";
+        }
+        catch (Exception)
+        {
+            exceptionText = "Вы не авторизованы!";
+        }
+
+        if (!string.IsNullOrEmpty(accessToken))
+            wresponses = await WorkHunterService.GetResponses(accessToken);
+    }
+}

@@ -81,8 +81,34 @@ public sealed class UserService : IUserService
 
         if (!await userManager.CheckPasswordAsync(user, dto.Password))
             throw new ArgumentException("Неверный логин или пароль!");
-        
-        return await GenerateTokens(user);
+
+        var tokens = await GenerateTokens(user);
+
+        dbContext.UserSessions.Add(new UserSession()
+        {
+            UserId = user.Id,
+            LoginDate = DateTime.UtcNow,
+            AccessToken = tokens.AccessToken,
+            RefreshToken = tokens.RefreshToken
+        });
+
+        await dbContext.SaveChangesAsync();
+
+        return tokens;
+    }
+
+    public async Task<User> GetByToken(string? accessToken)
+    {
+        var userLogin = await dbContext.UserSessions
+                                       .Include(x => x.User)
+                                       .AsSplitQuery()
+                                       .AsNoTracking()
+                                       .Where(x => x.AccessToken == accessToken)
+                                       .OrderByDescending(x => x.LoginDate)
+                                       .FirstOrDefaultAsync() 
+                                       ?? throw new UnauthorizedAccessException("Пользователь не авторизован!");
+
+        return userLogin.User!;
     }
 
     public async Task<UserView> GetById(string userId)

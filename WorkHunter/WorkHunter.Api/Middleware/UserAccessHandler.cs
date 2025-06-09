@@ -24,6 +24,7 @@ public class UserAccessHandler : IAuthorizationMiddlewareResultHandler
 
     private async Task<bool> CheckUserIsBlocked(HttpContext context)
     {
+        var authorizationHeader = context.Request.Headers["access_token"].FirstOrDefault();
         var userName = context.User?.Identity?.Name;
 
         if (string.IsNullOrEmpty(userName))
@@ -31,7 +32,7 @@ public class UserAccessHandler : IAuthorizationMiddlewareResultHandler
 
         using var scope = defaultServiceScopeFactory.CreateScope();
         var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
-        var user = await userService.GetByName(userName);
+        var user = await userService.GetByToken(authorizationHeader);       
 
         if (user?.IsBlocked ?? false)
         {

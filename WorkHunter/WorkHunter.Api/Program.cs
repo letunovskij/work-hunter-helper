@@ -1,6 +1,7 @@
 using Common.Exceptions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -24,6 +25,7 @@ builder.Services.AddAuthorization();
 builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration)
     => loggerConfiguration.ReadFrom.Configuration(hostBuilderContext.Configuration));
 
+builder.Services.AddHttpLogging(logging => { logging.LoggingFields = HttpLoggingFields.All; logging.CombineLogs = true; });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument(config =>
 {
@@ -120,6 +122,9 @@ app.UseStaticFiles(new StaticFileOptions
            Path.Combine(builder.Environment.ContentRootPath, "Client")),
     RequestPath = "/Client"
 });
+
+app.UseSimpleHttpLogging();
+app.UseHttpLogging();
 
 app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);

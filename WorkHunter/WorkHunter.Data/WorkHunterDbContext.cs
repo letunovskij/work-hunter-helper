@@ -46,6 +46,8 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
 
     public DbSet<SystemSetting> SystemSettings { get; set; }
 
+    public DbSet<UserSession> UserSessions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -74,6 +76,17 @@ public sealed class WorkHunterDbContext : IdentityDbContext<
                   .WithMany(x => x.UserRoles)
                   .HasForeignKey(x => x.UserId)
                   .IsRequired();
+        });
+
+        builder.Entity<UserSession>(entity =>
+        {
+            entity.ToTable("UserSessions");
+
+            entity.HasOne(x => x.User)
+                  .WithMany(x => x.UserSessions)
+                  .HasForeignKey(x => x.UserId)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<UserSetting>(entity =>

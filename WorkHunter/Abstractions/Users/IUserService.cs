@@ -22,4 +22,5 @@ public interface IUserService
 
     Task<UserView> Edit(UserEditDto dto);
 
+    Task<User> GetByToken(string? accessToken);
 }

@@ -25,4 +25,6 @@ public sealed class User : IdentityUser<string>
     public ICollection<UserTask>? UserTasks { get; set; }
 
     public ICollection<UserSetting>? Settings { get; set; }
+
+    public ICollection<UserSession>? UserSessions { get; set; }
 }
