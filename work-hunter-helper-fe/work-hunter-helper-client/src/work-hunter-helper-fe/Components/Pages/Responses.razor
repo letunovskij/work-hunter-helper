@@ -1,11 +1,19 @@
 ﻿@page "/Responses"
 
-@using Blazored.LocalStorage
 @using Common.Extensions
 @using WorkHunter.Models.Views.WorkHunters
 @using WorkHunterHelper.Services
+@inject IJSRuntime JS
 
 <PageTitle>Отклики</PageTitle>
+
+<script>
+    window.GetTokenFromBrowserStore = () => {
+        const dT = 'Bearer ' + localStorage.getItem("blzr-whhfe-usr-accs");
+        console.log(dT);
+        return dT;
+    };
+</script>
 
 <h3>Отклики пользователя</h3>
 
@@ -45,7 +53,6 @@
 }
 
 @code {
-@inject ILocalStorageService LocalStorage
     @inject IWorkHunterService WorkHunterService
 
     private List<WResponseView> wresponses;
@@ -57,8 +64,12 @@
         exceptionText = string.Empty;
         accessToken = string.Empty;
 
-        try {
-            var accessToken = await LocalStorage.GetItemAsStringAsync("blzr-whhfe-usr-accs");
+        try
+        {
+            var interopResult =
+                    await JS.InvokeAsync<string>("GetTokenFromBrowserStore");
+            accessToken = interopResult;
+            //var accessToken = await LocalStorage.GetItemAsStringAsync("blzr-whhfe-usr-accs");
 
             if (string.IsNullOrEmpty(accessToken))
                 exceptionText = "Вы не авторизованы!";

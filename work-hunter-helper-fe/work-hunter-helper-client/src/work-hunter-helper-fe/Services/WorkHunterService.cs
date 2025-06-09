@@ -72,8 +72,6 @@ public sealed class WorkHunterService : IWorkHunterService
 
     public async Task<List<WResponseView>> GetResponses(string accessToken)
     {
-        //var content = JsonSerializer.Serialize(dto, serializationOptions);
-
         var request = new HttpRequestMessage(HttpMethod.Get, $"{workHunterOptions.BaseUrl}responses");
         request.Content.Headers.Add("access-token", accessToken);
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

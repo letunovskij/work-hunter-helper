@@ -13,9 +13,16 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @inject IWorkHunterService WorkHunterService
-@inject ILocalStorageService LocalStorage
+@inject IJSRuntime JS
 
 <PageTitle>Log in</PageTitle>
+
+<script>
+    window.SetTokenInBrowserStore = (accessToken) => {
+        const dT = localStorage.setItem("blzr-whhfe-usr-accs", accessToken);
+        console.log(dT);
+    };
+</script>
 
 <h1>Log in</h1>
 <div class="row">
@@ -92,32 +99,14 @@
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
         var result = await WorkHunterService.GetToken(new LoginDto { Email = Input.Email, Password = Input.Password });
         if (!string.IsNullOrEmpty(result))
         {
-            await LocalStorage.SetItemAsStringAsync("blzr-whhfe-usr-accs", result);
+            await JS.InvokeVoidAsync("SetTokenInBrowserStore", result);
+
             Logger.LogInformation("User logged in.");
             RedirectManager.RedirectTo("Responses");
-            //NavigationManager.NavigateTo("auth");
-            //RedirectManager.RedirectTo("Auth");
         }
-        // else if (result.RequiresTwoFactor)
-        // {
-        //     RedirectManager.RedirectTo(
-        //         "Account/LoginWith2fa",
-        //         new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-        // }
-        // else if (result.IsLockedOut)
-        // {
-        //     Logger.LogWarning("User account locked out.");
-        //     RedirectManager.RedirectTo("Account/Lockout");
-        // }
-        // else
-        // {
-        //     errorMessage = "Error: Invalid login attempt.";
-        // }
     }
 
     private sealed class InputModel
