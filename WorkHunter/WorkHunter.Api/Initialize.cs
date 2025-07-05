@@ -43,7 +43,7 @@ internal static class Initialize
 
         if (existedUser == null)
         {
-
+            user.Id = Guid.NewGuid().ToString();
             var result = !string.IsNullOrEmpty(password)
                          ? await manager.CreateAsync(user, password)
                          : await manager.CreateAsync(user);

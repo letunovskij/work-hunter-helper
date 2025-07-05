@@ -3,9 +3,11 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OData.ModelBuilder;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using Serilog;
@@ -18,6 +20,7 @@ using WorkHunter.Data;
 using WorkHunter.Models.Config;
 using WorkHunter.Models.Constants;
 using WorkHunter.Models.Entities.Users;
+using WorkHunter.Models.Entities.WorkHunters;
 
 var builder = WebApplication.CreateBuilder();
 
@@ -114,6 +117,15 @@ builder.Services.RegisterApplicationServices(builder.Configuration);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+var modelBuilder = new ODataConventionModelBuilder();
+modelBuilder.EntityType<WResponse>();
+modelBuilder.EntitySet<User>("OUsers");
+
+builder.Services.AddControllers().AddOData(
+    options => options.Select().Filter().OrderBy().Expand().Count().SetMaxTop(null).AddRouteComponents(
+        "odata",
+        modelBuilder.GetEdmModel()));
+
 var app = builder.Build();
 
 app.UseStaticFiles(new StaticFileOptions
@@ -130,6 +142,9 @@ app.UseHttpsRedirection();
 app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRouting();
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 
 app.MapUsersEndpoints();
 app.MapWResponsesEndpoints();
