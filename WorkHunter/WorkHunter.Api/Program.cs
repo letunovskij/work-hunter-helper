@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Text;
 using WorkHunter.Api;
 using WorkHunter.Api.Endpoints;
+using WorkHunter.Api.Hubs;
 using WorkHunter.Api.Middleware;
 using WorkHunter.Data;
 using WorkHunter.Models.Config;
@@ -117,6 +118,8 @@ builder.Services.RegisterApplicationServices(builder.Configuration);
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+builder.Services.AddSignalR();
+
 var modelBuilder = new ODataConventionModelBuilder();
 modelBuilder.EntityType<WResponse>();
 modelBuilder.EntitySet<User>("OUsers");
@@ -127,7 +130,7 @@ builder.Services.AddControllers().AddOData(
         modelBuilder.GetEdmModel()));
 
 var app = builder.Build();
-
+app.UseDefaultFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
@@ -153,6 +156,8 @@ app.MapVideoInterviewEndpoints();
 app.MapTasksEndpoints();
 app.MapEnumEndpoints();
 app.MapAdminsEndpoints();
+
+app.MapHub<ChatHub>("/hub");
 
 if (builder.Configuration.GetValue<bool>("Settings:EnableDataSeeding"))
 {
