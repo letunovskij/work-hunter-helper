@@ -21,18 +21,20 @@ services:
     ports:
       - 55431:8080
       - 55432:8081
+    depends_on:
+      - postgres
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets:ro
       - ${APPDATA}/ASP.NET/Https:C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https:ro
-    networks:
-      - mynetwork
+    # networks:
+    #   - mynetwork
 
 volumes:
     pg-data1:
 
-networks:
-  mynetwork:
-     driver: nat
-     driver_opts:
-       com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+# networks:
+#   mynetwork:
+#      driver: nat
+#      driver_opts:
+#        com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
        # com.docker.network: "default"
